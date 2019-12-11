@@ -1,0 +1,217 @@
+Jupyter Notebook
+Homework on Series -Solutions
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+Homework on Series
+import pandas as pd
+import numpy as np
+Question 1
+Create a Series with index "A", 'B', 'C', 'A', 'B', 'B' and corresponding values 1,2,1,2,3,4.
+name the index 'my_name'
+Print out the unique values
+Print out the counts of the unique values.
+LA = ['A','B','C', 'A', 'B', 'B']
+vals =[1,2,1,2,3,4]
+myseries = pd.Series(vals, index = LA)
+myseries
+myseries.index.name = 'my_index'
+myseries
+myseries.unique()
+myseries.value_counts()
+Question 2
+create a series with values 1.1 and a and index 'number' and 'letter'
+Does this series work? Look carefully at the types of variables.
+myseries = pd.Series([1.1,'letter'], index = ['number','letter'])
+print myseries
+print type(myseries['number'])
+print type(myseries['letter'])
+# It appears Series can have mixed types in its column of values
+Question 3
+Create a Series with values 2, 4, and 1.
+Use this Series to create a new series containing allthe values less than 5. ( Do this on one line )
+Create a Series from the original series that is ordered lowest to highest.
+Take the natural log of all the values.
+myseries = pd.Series([2,4,1])
+myseries2 = myseries[myseries<5]
+myseries2
+myseries_ordered = myseries.sort_values(ascending = True)
+myseries_ordered
+​
+Question 4
+Create a series of values starting at 5 and ending at 99
+print out the 10th value of the series
+print out the 10th through 15th value of the series
+L1 = range(5,100)
+myseries = pd.Series(L1)
+print myseries[9]
+print myseries[9:15]
+Question 5
+Create two Series. The first has values ranging from 5 to 10, ( ie 6 different values), the second series has 3 different values.
+Add the series and print them out. Explain why the values are what they are.
+s1 = pd.Series(range(5,11))
+s2 = pd.Series(range(1,4))
+ssum = s1+ s2
+print s1
+print ''
+print s2
+print ''
+print ssum
+Question 6
+Create a numpy array called arr containing the values 1,2,3,4,6,8
+Convert the numpy array into a Series called s
+Change the third value of the array arr to 99.
+Print out the value of s[2] 5 Draw conclusions.ie explain your results.
+L = [1,2,3,4,6,8]
+arr =np.array(L)
+s = pd.Series(arr)
+arr[2] = 99
+print s
+​
+In Python everything is an object.
+The pointer to the Series is the same as the pointer to theh numpy arr. Changing one changes the other.
+print L
+​
+
+
+********************************
+
+
+
+
+Jupyter Notebook
+Homework_DataFrames1_Solutions
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+Homework on DataFrames
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+Question 1
+Use numpy to create an array of random integers. The size of the array should be 10 with 4 columns. Use a seed of 102
+Use this array to create a DataFrame. Call the columns "A", "B", "C","D"
+Select the second row and print it out 4 Drop the last row permanently
+Print out the second and third columns but just the rows 3,5,and 7
+Create a dataframe consisting of all rows of all columns but only when D>5
+#Use numpy to create an array of random integers
+np.random.seed(102)
+data = np.random.randint(9, size=(10, 4))
+data
+#Use this array to create a DataFrame. Call the columns "A", "B", "C","D"
+df = pd.DataFrame(data, columns =["A", "B", "C","D"])
+df.head()
+#Select the second row and print it out 
+df.iloc[1]
+df.tail()
+#Drop the last row permanently
+df = df.drop(9,axis = 0)
+df
+​
+#Print out the second and third columns but just the rows 3,5,and 7
+ro =[3, 5, 7]
+cols = ['B','C']
+dftoprint = df.loc[ro, cols]
+dftoprint
+# Create a dataframe consisting of all  rows of all columns but only when D>5
+dfspecial = df[df['D']>5]
+dfspecial
+Question 2
+Generate a numpy array of with 5 columns and 200 rows. Populate it with random integers between 0 and 9 inclusive.
+Convert the numpy array into a dataframe called df with column names 'C1, C2 C3 C4 and C5
+Compute the length of the dataframe
+Use the describe() method to get an overview of the variable C2.
+PLot a histogram of the variable C2 ( Hint df.hist(column = 'C2', figsize = (8,5))
+How many unique values are there in column C2?
+Compute the frequency of each number in C2.( Hint use a method called count_values. Save the answer.as C2_counts This will be an object. Then plot a bar chart using .....C2_counts.plot(kind = 'bar'))
+Create a new column in the dataframe. It is the sum of all column values if C1 is even. However if C1 is odd you only add C2 with C3.
+Compute the mean, median and standard deviation of the new column.
+Based on the median , create two dataframes. The first dataframe, dfLow, is based on your new column value being less than the median, while the second dataframe, dfHigh is for those values greater than the median. Compute the lengths of these two dataFrames
+For dfLow, delete C2 permanently
+Also delete the first row of dfLow
+Now delete the new second row
+Make the index consecutive integers starting from 0.
+​
+#Generate a numpy array of with 5 columns and 200 rows.
+#Populate it with random integers between 0 and 9 inclusive.
+numbers = np.random.randint(0, 10, size = 1000).reshape((200,5))
+#Convert the numpy array into a dataframe called df with column names 'C1, C2 C3 C4 and C5
+​
+L = 'C1 C2 C3 C4 C5'.split()
+df = pd.DataFrame(numbers, columns = L)
+df.head()
+#Compute the length of the dataframe
+n = len(df)
+print n
+#Use the describe() method to get an overview of the variable C2.
+df['C2'].describe()
+#PLot a histogram of the variable C2 ( Hint df.hist(column = 'C2', figsize = (8,5))
+df.hist(column = 'C2', figsize = (8,5))
+#How many unique values are there in column C2?
+C2unique = df['C2'].unique()
+print C2unique
+#Compute the frequency of each number in C2.
+C2_counts = df['C2'].value_counts()
+C2_counts
+C2_counts.plot(kind = 'bar')
+#Create a new column in the dataframe. 
+#It is the sum of all column values if C1 is even. However if C1 is odd you only add C2 with C3.
+# We will use the apply  method
+​
+def weights(x):
+    if(x[0]%2 == 0):
+        ans = x[0] + x[1] + x[2] + x[3] + x[4]
+    else:
+        ans = x[1]+ x[2]
+    return ans
+​
+df['new']= df.apply(weights, axis = 1)
+df.head()
+# Compute the mean, median and standard deviation of the new column.
+df['new'].median()
+df['new'].mean()
+df['new'].std()
+Based on the median , create two dataframes. The first dataframe, dfLow, is based on your new column value being less than the median, while the second dataframe, dfHigh is for those values greater than the median. Compute the lengths of these two dataFrames
+dfLow = df[df.new < 16.0]
+dfHigh = df[df.new>16.0]
+dfEqual = df[df.new == 16.0]
+print dfLow.head()
+print ''
+print dfHigh.head()
+print ''
+print dfEqual.head()
+print len(dfLow), len(dfHigh), len(dfEqual)
+# For dfLow, delete C2  
+dfsmall = dfLow.drop('C2', axis = 1)
+dfsmall.head()
+#Also delete the first row.
+dfverysmall = dfsmall[1:]
+dfverysmall.head()
+#Now delete the new second row 
+​
+dfverysmaller= dfverysmall.drop(3, axis = 0)
+dfverysmaller.head()
+dfverysmaller.index = range(0, len(dfverysmaller))
+dfverysmaller.head()
+​
+
+
