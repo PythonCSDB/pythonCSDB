@@ -1,0 +1,196 @@
+Jupyter Notebook
+Simulation Homework -Solutions
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+Homework Simulation
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+from scipy import stats
+Question 1
+Use Monte Carlo Simulation to compute the area under the curve:
+
+f(x)= 3x + 2x**4 between 0 and 5.
+Use 1000 pairs of random numbers with a seed of 123
+​
+def f(x):
+    return 3.0*x + 2.0*(x**4)
+​
+def my_sim(x, y):
+    fx = f(x)
+    ans = 0
+    if y <fx:
+        ans = 1
+    return ans
+​
+def my_proportion(nsims):
+    mycnt = 0
+    for i in xrange(nsims):
+        x = np.random.uniform(low = 0.0, high = 5.0)
+        y = np.random.uniform(low = 0.0, high = 3*5 + 2*(5**4))
+        ans = my_sim(x,y)
+        mycnt = mycnt + ans
+    myarea = 5*(3*5 + 2*(5**4))
+    return (float(mycnt)/nsims)*myarea
+​
+intfx = my_proportion(10000)
+​
+print ' My estimate of the integral is  ', intfx
+print ' The true answer is:', 3*25 + 2*(5**5)/5.0
+        
+​
+Question 2
+Assume defaults in avery large portfolio of consumer loans occur randomly at an average rate of 10 per year.
+
+Use a Poisson random variable to establish the distribution of bad loans over the year.
+
+Now assume that when a loan defaults the loss given default is 20% with probability 0.6 and 80% with probability 0.4.
+
+Simulate the distribution of portfolio losses over a year, assuming the size of each loan is 100,000 dollars.
+
+​
+​
+​
+def Compute_Default_Costs(lam, p1, L1,L2, nsims):
+    Total = np.zeros(nsims)
+    for i in range(0, nsims):
+        #step 1  generate a Poisson random variable
+        n = stats.poisson.rvs(lam, size = 1)
+        # step 2: For each event generate losses and add them up
+        cost = 0.0
+        for j in range(0,n):
+            # generate a unifor random variable
+            myvar = np.random.random(size = 1)
+            loss = L2
+            if myvar < p1:
+                loss = L1
+            #loss = [ L1 if  myvar < p1 else L2]
+             
+            cost = cost + 100*loss
+        # Step 3: Store the total cost for the year
+        Total[i] = cost
+    #Step 4: Compute the histogram of Costs
+    plt.hist(Total, bins = 20)
+    return
+​
+np.random.seed(123)
+lam = 10.0
+p1 = 0.6;L1 = 0.20; L2= 0.8
+nsims = 10000
+​
+Compute_Default_Costs(lam, p1, L1,L2, nsims)
+    
+    
+​
+def Compute_Default_Costs2(lam, p1, L1,L2, nsims):
+    Total = np.zeros(nsims)
+    Nbads = stats.poisson.rvs(lam, size = nsims)
+    for i in xrange(0, nsims):
+        balls = np.zeros(10, dtype='float') # zero is blue
+        balls[0:5] = 1
+        balls[6:9] = 0
+        drawing = np.random.choice(balls, Nbads[i], replace=True)
+        ngood = np.count_nonzero(drawing == 1)*L1
+        nbad = np.count_nonzero(drawing ==0)*L2
+        Total[i] = ngood+ nbad
+    plt.hist(Total, bins = 20)
+    return
+​
+​
+np.random.seed(123)
+lam = 10.0
+p1 = 0.6;L1 = 0.20; L2= 0.8
+nsims = 10000
+​
+Compute_Default_Costs2(lam, p1, L1,L2, nsims)
+Question 3
+Flip a coin twice for 100 times and count the number of tails.
+Generate a random array of 0-s (heads) and 1-s (tails) with two rows (representing two coin flips) and 100 columns.
+The sum of the two rows represents the number of tails. The np.sum function takes an array and by default sums all the values in the array and returns one number. In this case we want to sum the rows. For that, the sum function has a keyword argument called axis, where axis=0 sums over index 0 of the array (the rows), axis=1 sums over the index 1 of the array (the columns), etc.
+Identify the distribution of number of tails ( 0, 1, 2).
+Plot out the frequency distribution ( histogram)
+np.random.seed(55)
+flips = np.random.randint(low=0, high=2, size=(2, 10))
+print flips
+tails = np.sum(flips, axis=0)
+number_of_tails = np.zeros(3)
+for i in range(3):
+    number_of_tails[i] = np.count_nonzero(tails == i)
+print('number of 0, 1, 2 tails:', number_of_tails)
+Question 4
+Use the package stats contained in scipy to get the 99th percentile of the standard normal random variable
+
+#https://stats.stackexchange.com/questions/3438/calculating-percentile-of-normal-distribution
+​
+stats.norm.ppf(0.99)
+    
+Question 5
+Assume prices follow a Geometric Brownian Motion. A stock trades at 50 dollars. The riskless rate is 5% continuously compounded, The volatility of the logarithmic returns is 30%( ie 0.30 per year.
+
+A contract exists that pays the sum of the price in 3 months, 6 months, 9 months and one year minus 220 if positive or zero otherwise.
+
+Use risk neutral valuation to price the contract. Assume a seed of 123. Also use 10000 sample paths. Report a 95% confidence interval for your answer.
+
+​
+Question 6 Background
+A way to simulate flipping a coin twice, is to draw a number at random from a set of 2 numbers (0 and 1). You need to replace the number after every draw, of course. The numpy function to draw a random number from a given array is called choice. The choice function has a keyword to specify whether values are replaced or not. Hence the following two ways to generate 5 flips are identical.
+
+import numpy as np
+np.random.seed(55)
+flips1 = np.random.randint(low=0, high=2, size=5)  # gets zeros and ones
+np.random.seed(55)
+flips2 = np.random.choice(range(2), size=5, replace=True)
+# Check whether all values in the two arrays are equal
+np.alltrue(flips1 == flips2)  
+Question 6
+Consider the case that we have a bucket with 4 blue balls and 6 red balls. When you draw the first ball at random, the probability of a blue ball is 0.4 and the probability of a red ball is 0.6. A sequence of drawing ten balls, with replacement, may be generated as follows
+
+balls = np.zeros(10, dtype='int') # zero is blue
+balls[4:] = 1  # one is red
+print('balls:', balls)
+drawing = np.random.choice(balls, 8, replace=True)
+print('drawing:', drawing)
+print('blue balls:', np.count_nonzero(drawing == 0))
+print('red balls:', np.count_nonzero(drawing == 1))
+The results would be very different if we sample without replacement. Take the above program and turn it into a function making the change sampling without replacemnt.
+
+Now using Monte Carlo simulation estimate the probability of drawing eacatly two red balls in three trials from the urn assuming there is no replacement after each draw.
+
+def draw3():
+    balls = np.zeros(10, dtype='int') # zero is blue
+    balls[4:] = 1  # one is red
+    drawing = np.random.choice(balls, 3, replace=False)
+    return  np.count_nonzero(drawing == 1)
+​
+def simballs(nsims):
+    x = np.zeros(nsims+1)
+    for i in xrange(nsims):
+        x[i] = draw3()
+        
+    mysuc = np.count_nonzero((x ==2))
+    return mysuc/float(nsims) 
+​
+nsims = 1000
+ans = simballs(nsims)
+print ans
+        
+    
+        
+    
+    
+​
+***********************************************
+
+
+
+
