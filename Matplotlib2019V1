@@ -1,0 +1,283 @@
+Jupyter Notebook
+Matplotlib2019V1
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+def BS_call(S, X, T, rf, q, sigma):
+    # Black-Scholes-Merton Call Calculation
+    # Input Variable:
+    # s--Stock Price; x--Exercise Price; rf--Risk Free Rate;
+    # t--Time to Maturity; sigma--Volatility;  q--Continuous Dividend Yield
+    
+    
+​
+    G= S*np.exp(-q*T)
+    d1 = (np.log(G / X)+(rf + 0.5 * sigma ** 2) * T) / (sigma * sqrt(T))
+    d2 = d1 - sigma * (sqrt(T))
+    Nd1 = stats.norm.cdf (d1,0.0,1.0)
+    Nd2 = stats.norm.cdf (d2,0.0,1.0)
+    c0 = G*Nd1 - X*exp(-rf*T)*Nd2
+    return  c0
+​
+def BS_put(S, X, T, rf, q, sigma):
+           from math import log, sqrt, exp
+           from scipy import stats
+           C0 = BS_call(S, X, T, rf, q, sigma)
+           G0 = S*exp(-q*T)
+           P0 = X*exp(-rf*T) - G0 + C0
+           return P0
+​
+s = 30.0;X= 30.0; T = 5.0; rf= 0.03; q = 0.00; sigma = 0.30 
+def create(n):
+    x = np.arange(n)
+    y = np.random.randint(9, size=n)
+    return x, y
+x, y = create(20)
+​
+plt.plot(x, y);
+plt.plot(x, y)
+plt.plot(x,y,'ro')
+x,y = create(20)
+# We have x and y 
+plt.plot(x,y)
+plt.xlabel('Plot Number')
+plt.ylabel(' Grade')
+plt.title('This is my First Graph for data visualization\n  using Python and Titles ')
+# Plot two line with a legend
+x, y1 = create(20)
+x, y2 = create(20)
+​
+plt.plot(x,y1)
+plt.plot(x,y2)
+plt.xlabel('Plot Number')
+plt.ylabel(' Grades for two classes')
+plt.title('This is my First Graph for data visualization\n  using Python and Titles ')
+# Now lets add a legend:
+plt.plot(x,y1,  label = 'Line 1')
+plt.plot(x,y2, label = 'Line 2')
+plt.xlabel('Plot Number')
+plt.ylabel('Score')
+plt.title('This is my First Graph for data visualization\n  using Python and Titles ')
+plt.legend()
+fig = plt.figure(figsize = (10,8))
+plt.plot(x,y1,  label = 'Line 1')
+plt.plot(x,y2, label = 'Line 2')
+plt.xlabel('Plot Number')
+plt.ylabel('Score')
+plt.title('This is my First Graph for data visualization\n  using Python and Titles ')
+plt.legend()
+​
+fig.savefig("myfile.png")
+​
+fig = plt.figure(figsize = (10,8))
+plt.plot(x,y1,  label = 'Line 1')
+#plt.plot(x,y2, label = 'Line 2')
+plt.plot(x, y2, color='green', marker='o', linestyle='dashed',linewidth=2, markersize=5)
+plt.xlabel('Plot Number')
+plt.ylabel('Score')
+plt.title('This is my First Graph for data visualization\n  using Python and Titles ')
+plt.legend()
+plt.xlim(0,20)
+plt.grid(color='b', linestyle='--', linewidth=1, axis = 'major')
+plt.xticks(np.arange(0, 22, step=2))
+fig.savefig("myfile.png")
+​
+Class Project, involving Options
+Using the Black Scholes model, draw a graph of call price versus option price for three differenet maturities
+
+show the exercise value (max(S-x, 0) on your graph
+
+Use the case parameters I have provided in a cell near the top of this notebook
+
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+​
+We now will move away from using plt and focus on a much better way of drawing graphs
+I strongly recommend you use this following approach if you need more control.
+fig, axs = plt.subplots(nrows = 1, ncols = 1, figsize =(12,6))
+​
+ax = axs
+​
+ax.plot(x, y1, color = 'blue', linestyle = 'dashed', label = 'Line 1')
+ax.plot(x, y2, color = 'green', linestyle = '-.', label = 'Line 2')
+​
+ax.set_ylabel('This is y ', fontsize = 12)
+ax.set_xlabel('This is x', fontsize = 12)
+​
+ax.set_title('Oh My Gosh!')
+​
+# Don't allow the axis to be on top of your data
+ax.set_axisbelow(True)
+​
+​
+​
+# Turn on the minor TICKS, which are required for the minor GRID
+ax.minorticks_on()
+​
+# Customize the major grid
+ax.grid(which='major', linestyle='--', linewidth='0.25', color='red')
+# Customize the minor grid
+ax.grid(which='minor', linestyle=':', linewidth='0.5', color='black')
+​
+# Set the range of x
+ax.set_xlim(0, 20)
+#set the tick gaps using a list or array.
+ax.set_xticks(np.arange(0, 22, step=2))
+​
+# set the legend 
+ax.legend(loc= 0, shadow=False, fontsize = 12)
+​
+fig.savefig("myfile.png")
+x1, y1 = create(50)
+x2, y2 = create(50)
+x3, y3 = create(50)
+x4, y4 = create(50)
+x = x1
+n = len(x2)
+fig, axs = plt.subplots(nrows = 1, ncols = 2, figsize =(12,6))
+​
+​
+ax = axs[0]
+​
+ax.plot(x1, y1, color = 'blue', linestyle = 'dashed', label = 'Line 1')
+ax.plot(x2, y2, color = 'green', linestyle = '-.', label = 'Line 2')
+ax.set_ylabel('This is y1 and y2 ', fontsize = 12)
+ax.set_xlabel('This is x', fontsize = 12)
+ax.set_xlim(0, n)
+ax.set_ylim(0, 10)
+legend = ax.legend(loc= 0, shadow=False, fontsize = 12)
+​
+ax = axs[1]
+​
+ax.plot(x3, y3, color = 'blue', linestyle = 'dashed', label = 'Line 1')
+ax.plot(x4, y4, color = 'green', linestyle = '-.', label = 'Line 2')
+ax.set_ylabel('This is y3 and y4 ', fontsize = 12)
+ax.set_xlabel('This is x', fontsize = 12)
+ax.set_ylim(0, 10)
+legend = ax.legend(loc= 0, shadow=False, fontsize = 12)
+​
+plt.tight_layout()
+​
+fig.savefig("myfile.png")
+fig, axs = plt.subplots(nrows = 2, ncols = 2, figsize =(12,6))
+​
+ax = axs[0,0]
+ax.plot(x, y1, color = 'blue', linestyle = 'dashed', label = 'Line 1')
+ax.plot(x, y2, color = 'green', linestyle = '-.', label = 'Line 2')
+ax.set_ylabel('This is y1 and y2 ', fontsize = 12)
+ax.set_xlabel('This is x', fontsize = 12)
+#ax.set_ylim(0, 20)
+legend = ax.legend(loc= 0, shadow=False, fontsize = 12)
+​
+ax = axs[0,1]
+ax.plot(x2, y3, color = 'blue', linestyle = 'dashed', label = 'Line 1')
+ax.plot(x2, y3, color = 'green', linestyle = '-.', label = 'Line 2')
+ax.set_ylabel('This is y3 and y4 ', fontsize = 12)
+ax.set_xlabel('This is x2', fontsize = 12)
+#ax.set_ylim(0, 20)
+legend = ax.legend(loc= 0, shadow=False, fontsize = 12)
+​
+ax = axs[1,0]
+ax.plot(x3, y3, color = 'b', linestyle = '-', label = 'Line 3')
+ax.set_ylabel('This is y3  ', fontsize = 12)
+ax.set_xlabel('This is x3', fontsize = 12)
+legend = ax.legend(loc= 0, shadow=True, fontsize = 12)
+​
+ax = axs[1,1]
+ax.plot(x4, y4, color = 'b', linestyle =':' , label = 'Line 3')
+ax.set_ylabel('This is y4', fontsize = 12)
+ax.set_xlabel('This is x4', fontsize = 12)
+legend = ax.legend(loc= 0, shadow=True, fontsize = 12)
+​
+plt.tight_layout()
+​
+fig.savefig("myfile.png")
+x = np.linspace(0, 1, 12)
+x[0]
+from math import sqrt, exp, log
+​
+def sim1(s0, mu, sigma, T, npts):
+    dt = T/npts
+    z = np.random.standard_normal(npts+1)
+    S = np.zeros(npts+1)
+    S[0] = s0
+    x = np.linspace(0, T, npts+1)
+    for t in range(1, npts+1):
+        S[t]= S[t-1]*exp((mu- sigma**2/2)*dt + sigma*sqrt(dt)*z[t])
+    return x, S
+​
+s1 = 50; mu1 = 0.10; sigma1 = 0.10
+s2 = 100; mu2 = 0.10; sigma2 = 0.30
+npts = 60; T = 5
+​
+x, y1 = sim1(s1, mu1, sigma1, T, npts)
+x, y2 = sim1(s2, mu2, sigma2, T, npts)
+    
+    
+fig, axs  = plt.subplots()
+​
+ax1 = axs
+​
+ax1.plot(x,y1, 'g', lw=1.5, label='A')
+ax1.set_xlabel("Time")
+ax1.set_ylabel("A")
+ax1.legend(loc=4)
+#ax.grid()
+​
+​
+ax2 = axs.twinx()
+​
+ax2.plot(x,y2, '--', color ='r', label = 'B')
+ax2.set_ylabel("B")
+ax2.legend(loc = 0);
+​
+np.random.seed(19680801)
+​
+mu = 0.10; sigma = 0.30
+x = mu + sigma * np.random.randn(10000)
+​
+# the histogram of the data
+n, bins, patches = plt.hist(x, 50, density=1, facecolor='g', alpha=0.75)
+​
+​
+plt.xlabel('return')
+plt.ylabel('Probability')
+plt.title('Histogram of returns')
+plt.text(0.50, 1.0, '$\mu=0.10$ $\sigma=0.30$')
+#plt.axis([-1.5, 1.5, 0, 1.5])
+plt.grid(False)
+plt.show()
+​
