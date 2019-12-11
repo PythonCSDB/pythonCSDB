@@ -1,0 +1,142 @@
+Jupyter Notebook
+Delta Hedging for class
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+import numpy as np
+import matplotlib.pyplot as plt
+%matplotlib inline
+from scipy import stats
+from math import log, sqrt, exp
+def BS_call(S, X, T, rf, q, sigma):
+    # Black-Scholes-Merton Call Calculation
+    # Input Variable:
+    # s--Stock Price; x--Exercise Price; rf--Risk Free Rate;
+    # t--Time to Maturity; sigma--Volatility;  q--Continuous Dividend Yield
+    
+    if ( T <= 0.0):
+        c0 = np.maximum(S-X, 0.0)
+        return c0
+    
+    G= S*np.exp(-q*T)
+    d1 = (np.log(G / X)+(rf + 0.5 * sigma ** 2) * T) / (sigma * sqrt(T))
+    d2 = d1 - sigma * (sqrt(T))
+    Nd1 = stats.norm.cdf (d1,0.0,1.0)
+    Nd2 = stats.norm.cdf (d2,0.0,1.0)
+    c0 = G*Nd1 - X*exp(-rf*T)*Nd2
+    return  c0
+​
+S = 30;X= np.array([20, 30.0, 40]); T = 5.0; rf= 0.03; q = 0.00; sigma = 0.30           
+​
+callp = BS_call(S, X, T, rf, q, sigma)           
+print(callp)
+def BS_delta(s, x, t, rf, q,sigma):
+    ''' Greek Calculation: Delta for call and put
+    Input Variable:
+    s--Stock Price; x--Exercise Price; rf--Risk Free Rate;
+    t--Time to Maturity; sigma--Volatility;  q--Continuous Dividend Yield
+    '''
+    if ( t <= 0.0):
+        if (type(s) == float) or (type(s) == int):  # this means s is a scalar and is 
+            if(s<x):
+                deltaC = 0.0
+                deltaP = 1.0
+            else:
+                deltaC = 1.0
+                deltaP = 0.0
+            return deltaC, deltaP
+        else:
+            u = s-x
+            deltaC = [1 if v >0 else 0 for v in u ]
+            deltaP = [0 if v<0 else 1 for v in u]
+            return np.array(deltaC), np.array(deltaP)
+            
+​
+    G=s*np.exp(-q*t)
+    d1 = (np.log(G / x)+(rf + 0.5 * sigma ** 2) * t) / (sigma * sqrt(t))
+    Nd1 = stats.norm.cdf (d1,0.0,1.0)
+    deltaC = Nd1
+   
+    
+    return deltaC
+​
+A call option can be replicated by buying H shares of stock partially financed by borrowing B dollars
+C=HS−B
+ 
+H=N(d1)  and  B=Xe−rTN(d2) 
+We have to continuously change H and B.
+
+def delta_hedging(s0, X, T, alpha,rf,q, sigma, npts, npaths): '''Simulate npaths of stock prices. We rebalance npts times. We recognize that a call option can be replicated by a dynamic strategy involving delta hedging. '''
+
+# Step 1: Initialize: keep track of all the paths, all the B values, 
+#         and all the H values. Also track the true call prices.
+
+dt      = T/npts
+z       = np.random.standard_normal((npts+1, npaths))
+S1      = np.zeros((npts+1, npaths))
+B       = np.zeros((npts+1, npaths))    # C = HS - B
+H       = np.zeros((npts+1, npaths))
+C0      = np.zeros((npts+1,npaths) )
+S1[0,:] = s0
+mydates = np.linspace(0, T, npts+1)
+final   = np.zeros(npaths)        # Contains the final profit.
+
+
+# Step 2: Generate all the stock price paths 
+for t in range(1, npts+1):
+    S1[t,:]= (S1[t-1,:]*np.exp((alpha-0.5*sigma**2)*dt + 
+                             sigma*np.sqrt(dt)*z[t,:]))
+
+
+# Step 3: Set up the initial Delta Hedge
+# get the initial call prices and delta values
+# We sold the actual call. This gives us some funds, so our original 
+# borrowing is reduced.
+C0[0]    = BS_call(S1[0], X, T, rf, q, sigma)
+H[0,:]   = BS_delta(S1[0], X, T, rf, q,sigma)
+B[0,:]   = H[0,:]*S1[0] -C0[0]
+
+
+for t in range(1, npts+1):
+    # get the call prices at time t:
+    myt = T-t*dt
+    # Find the true call price
+
+    # Find the true H and B
+
+
+
+# The value of our final replicating portfolio (assets)  is HS-B
+# Our liability is C
+# So net value is (HS-B)- C
+
+final = 
+
+return final, S1, B,H,C0, mydates 
+s0 = 50.0; X = 50.0; T = 12/52.0; alpha = 0.20; sigma = 0.30; rf = 0.05; q = 0.0; npaths = 1000; npts = 12
+
+#final, S1, B,H,C0, mydates = (
+
+#delta_hedging(s0, X, T, alpha, rf,q,sigma, npts, npaths) )
+
+#Compute the errors at each time point.  ( HS -B - C) and plot them out against mydates
+​
+# compute the histogram of the final errors (profits)
+​
+​
+​
+# Write a  function that returns a plot of std deviation of final profits against 
+# the number of rebalance points. ( npts from 5 to 515, steps of 10)
+​
+​
+​
+​
