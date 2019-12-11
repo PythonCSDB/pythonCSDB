@@ -1,0 +1,318 @@
+Jupyter Notebook
+Simulation_Exotics_2019
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+Pricing Exotics using Monte Carlo Simulation
+import numpy as np
+# We need to import a package for data visualization
+import matplotlib.pyplot as plt
+# This line of code is used to display pictures in Jupyter Notebook
+%matplotlib inline
+import scipy
+from scipy import stats
+import seaborn as sns
+sns.set_style('whitegrid')
+​
+from scipy.stats import norm
+Monte Carlo Simulation in Finance for Valuation
+We want to build a model that computes the Black Scholes formula for a call option and a put option. The formula requires knowledge of:
+
+The stock price, S
+The strike price, X
+The Time to Expiration (in years), T
+The risk free rate, r
+The dividend yield, q
+The volatility, σ.
+The price of a call is given by
+C0=G0N(d1)−XerTN(d2)
+where
+
+d1=ln(G0/X)+(r+0.5σ2)TσT⎯⎯⎯√
+d2=d1−σT⎯⎯⎯√
+and G0=S0e−qT.
+
+# We can compute the price of an option using the Black Scholes Formula
+def BS_call(S, X, T, r, q, sigma):
+    G = S*np.exp(-q*T)
+    d1 = (np.log(G/X) + (r+0.5*sigma**2)*T)/(sigma*np.sqrt(T))
+    d2 = d1 -sigma*np.sqrt(T)
+    Nd1 = stats.norm.cdf(d1, 0.0,1.0)
+    Nd2 = stats.norm.cdf(d2,0.0,1.0)
+    value = G*Nd1 - X*np.exp(-r*T)*Nd2
+    return value
+​
+​
+def BS_put(S, X, T, r, q, sigma):
+    valuec = BS_call(S, X, T, r, q, sigma)
+    G = S*np.exp(-q*T)
+    valuep = X*np.exp(-r*T) - G + valuec
+    return valuep
+​
+S = 50.0; X = 50.0; T = 1.0; r = 0.05; q = 0.0;    
+    
+C0 = BS_call(S, X, T, r, q, sigma)
+P0 = BS_put(S, X, T, r, q, sigma)
+print("C0=", round(C0,2))
+print('P0=', round(P0,2))
+    
+Recall that to price an option we can use risk neutral valuation. Assume the stock pays no dividend then the growth rate of the stock, μ=rf. So we could simulate many prices of the stock at the expiry date, T, under the assumption that μ=rf, or equivalently that α=μ−12σ2.
+
+Now for each stock price, sT, we can get the payout of the option, cT=Max(0,ST−X).
+So if we simulate N possible stock prices at date T we now can obtain N option prices at date T. Let these option values be ci,i=1,2,3...,N
+We now can compute the average option price at date T.
+CT¯=ΣNi=1ci
+The risk neutral price at date 0 will then be this average price discounted at the risk free rate. That is:
+C0=(ΣNi=1ci)e−rfT
+Note if the dividend yield on the stock is q. Then the growth rate, μ but be lower. Specifically μ=r−q.
+def simulate_Ecall(S0,strike, T, r, q, sigma, nsims):
+    # Now generate nsims possible stock prices after T years
+    # Note we do not need the path to date T
+    S1 = np.zeros(nsims)
+    C1 = np.zeros(nsims)
+    z = np.random.standard_normal(nsims)
+    
+    #for i in range(0,nsims+1):
+    S1= S0*np.exp((r-q - 0.5*sigma**2)*T+ sigma*np.sqrt(T)*z) 
+    C1 = np.maximum(S1-strike,0.0)*np.exp(-r*T) 
+    C0 = C1.mean()
+    return C0
+​
+S = 50.0; X = 50.0; T = 1.0; r = 0.05; q = 0.0; sigma = 0.3;nsims = 10000
+TrueValue  = BS_call(S, X, T, r, q, sigma)
+SimulatedValue = simulate_Ecall(S, X, T, r, q, sigma, nsims)
+​
+print(round(TrueValue,2), round(SimulatedValue,2))
+def simulate_Ecall_with_se(S0,strike, T, r, q, sigma, nsims):
+    # Now generate nsims possible stock prices after T years
+    # Note we do not need the path to date T
+    S1 = np.zeros(nsims)
+    C1 = np.zeros(nsims)
+    z = np.random.standard_normal(nsims)
+    
+    #for i in range(0,nsims+1):
+    S1= S0*np.exp((r-q - 0.5*sigma**2)*T+ sigma*np.sqrt(T)*z) 
+    C1 = np.maximum(S1-strike,0.0)*np.exp(-r*T) 
+    C0 = C1.mean()
+    stderr = C1.std()/np.sqrt(nsims)
+    return C0, stderr
+​
+S = 50.0; X = 50.0; T = 1.0; r = 0.05; q = 0.0; sigma = 0.3;nsims = 10000
+TrueValue  = BS_call(S, X, T, r, q, sigma)
+simval, stderr = simulate_Ecall_with_se(S, X, T, r, q, sigma, nsims)
+lower = simval - 2*stderr
+upper = simval + 2*stderr
+print('The confidence interval is', np.round((lower, upper),2))
+print('The True value is         ', round(TrueValue,2))
+Pricing Exotic Options
+- We price an average rate, sometimes called an  Asian option
+
+- We only consider European style options here.
+def average_rate_option(s, x, T, r, q, sigma, npts, nsims):
+    #Initialize variables
+    dt = T/npts
+    s1 = np.zeros((npts+1, nsims))
+    cvalues = np.zeros(nsims)
+    mydates = np.zeros(npts+1)
+    z = np.random.standard_normal((npts, nsims))
+    s1[0,:]= s
+    # Step 2: Main Loop  ( each path is a column)
+    for t in range(1, npts+1):
+        s1[t,:]= (s1[t-1,:]*np.exp((r-q-0.5*sigma**2)*dt + 
+                                 sigma*np.sqrt(dt)*z[t-1,:]))
+        mydates[t]= dt*t
+        
+        
+    myav = (s1.sum(axis = 0)-s)/npts
+​
+    mypayout = np.maximum(0, myav-x)*np.exp(-r*T)
+    myans = mypayout.mean()
+    mystd = mypayout.std()
+    lower = myans - 1.96*mystd/np.sqrt(nsims)
+    upper = myans + 1.96*mystd/np.sqrt(nsims)
+    return myans, lower, upper
+​
+​
+s = 50.0; x = 50.0; T = 1.0; r = 0.05; q = 0.0; sigma = 0.3;nsims = 5000; npts= 4
+​
+myans, lower, upper = average_rate_option(s, x, T, r, q, sigma, npts, nsims)
+print('The simulated value of the Average rate call is', round(myans, 3))
+print('Lower bound is ', round(lower, 3))
+print('Upper bound is ', round(upper, 3))       
+Note that an average rate option with one reset point is just a regular European call option.
+def sensitivity(s, x, T, r, q, sigma,nsims):
+    # vnpts is the vector of reset points.
+    vnpts = np.arange(1, 21)
+    n = len(vnpts)
+    myans = np.zeros(n)
+    for i, npts  in enumerate(vnpts):
+        np.random.seed = [128]
+        myans[i], lower, upper = average_rate_option(s, x, T, r, q, sigma, npts, nsims)
+    bs = BS_call(s, x, T, r, q, sigma) 
+    
+    plt.plot(vnpts, myans, 'g')
+    plt.plot(vnpts, bs*np.ones(n), 'r:')
+    return
+​
+s = 50.0; x = 50.0; T = 1.0; r = 0.05; q = 0.0; sigma = 0.3;nsims = 500000
+sensitivity(s, x, T, r, q, sigma,nsims)
+            
+There are many types of European style exotics
+
+Knockout calls and puts (sometimes called barriers)
+Knockin calls and puts
+
+Options on the maximum price over a time interval
+
+Options on the minimum price over a time interval
+
+Binary Options or Digitals
+
+Forward Start Options
+
+Chooser Options ( At the expiry date, you choose between a call and a put ( usually the same strike))
+
+Compound Options ( An European Option where the underlying at date T, is an options with a particular strike and maturity)
+
+ 8.1 Call option on a call
+ 8.2 Call option on a put
+ 8.3 Put option on a call
+ 8.4 Put option on a put
+Many other types
+
+Generating Correlated Normal Random Variables
+In many applications we may need to generate a stream of correlated random variables or time series of prices
+
+Here we learn how to do this.
+
+If you need to generate n correlated Gaussian distributed random variables Y∼N(μ,Σ)
+
+where Y=(Y1,…,Yn) is the vector you want to simulate, μ=(μ1,…,μn) the vector of means and Σ the given covariance matrix,
+
+you first need to simulate a vector of uncorrelated Gaussian random variables, Z
+then find a square root of Σ, i.e. a matrix L such that LLT=Σ
+Your target vector is given by
+Y=μ+LZ.
+A popular choice to calculate L is the Cholesky decomposition.
+
+Cholesky decomposition is applied to the correlation matrix, providing a lower triangular matrix L, which when applied to a vector of uncorrelated samples, u, produces the covariance vector of the system.
+
+Cholesky decomposition assumes that the matrix being decomposed is Hermitian and positive-definite. Since we are only interested in real-valued matrices, we can replace the property of Hermitian with that of symmetric (i.e. the matrix equals its own transpose).
+
+Cholesky decomposition is approximately 2x faster than LU Decomposition, where it applies.
+
+# Illustration of establishing the Cholesky Decomposition
+​
+import numpy as np
+import scipy
+#import scipy.linalg   # SciPy Linear Algebra Library
+​
+A = np.array([[6, 3, 4, 8], [3, 6, 5, 1], [4, 5, 10, 7], [8, 1, 7, 25]])
+L = scipy.linalg.cholesky(A, lower=True)
+#U = scipy.linalg.cholesky(A, lower=False)
+​
+print("A:")
+print(A)
+​
+print("L: This is the transformation Equation You are looking for")
+print('')
+print(L)
+print('')
+ans =np.dot(L,L.T)
+​
+print('This is a check: L times L.T should equal A:')
+print(ans) 
+​
+Example of generating correlated variables
+Say the correlation between x and y is 0.8. They are normal with mean 0 and variance 1 Generate 100 correlated normal variables
+
+cor =np.array([[1,0.8], [0.8,1]])
+L = scipy.linalg.cholesky(cor, lower=True)
+print(L)
+​
+So we generate one standard normal random variable x1.
+Then we generate a second independent normal random variable, x2
+We put y1=x1
+and y2=0.8x1+0.6x2
+def Gen_Corr_Standard_Normal(rho):
+    # Given rho, generate one sample of n correlated standard normals variables
+    # with the correlation rho
+    L = scipy.linalg.cholesky(rho, lower=True)
+    nvar = rho.shape[0]
+    #X is a column vector of size nvar
+    x = np.random.standard_normal(nvar).reshape(nvar, 1)  
+    y = np.dot(L, x)
+    return y
+​
+​
+rho = np.array([[1,0.8], [0.8,1]])
+myzvalues = Gen_Corr_Standard_Normal(rho)
+myzvalues
+def Simulate_Many_Correlated_Normals(rho, nsims):
+    nvariables = rho.shape[0]
+    myout = np.zeros((nsims,nvariables))
+    for i in range(0, nsims):
+        myout[i,:] = Gen_Corr_Standard_Normal(rho).T   # This will be a row vector
+    return myout
+​
+rho = np.array([[1,0.8], [0.8,1]])
+nsims = 3
+myout = Simulate_Many_Correlated_Normals(rho, nsims)
+myout
+​
+        
+        
+rho = np.array([[1,0.8], [0.8,1]])
+nsims = 200
+myout = Simulate_Many_Correlated_Normals(rho, nsims).T
+plt.scatter(myout[0],myout[1])
+Exchange Option
+Consider an option to exchange one stock of B for one stock of A at date T
+
+The payout of the option is $C_T = Max[0, A_T - B_T]
+
+We are given the vols of the two stocks and the correlation of returns, ρ.
+
+We will assume there are no dividends so μA=μB=r.
+
+So we simulate the prices of A and B at date T, and compute the payout.
+
+We then know how to price the derivative and establish a confidence interval.
+
+In many cases, there could be an analytical solution,
+
+def sim_exchange_call(A0, B0, sigA, sigB, rhoAB, T, r, qA, qB, nsims):
+    
+    rhoM = np.array([[1, rhoAB],[rhoAB, 1]])
+    myout = Simulate_Many_Correlated_Normals(rho, nsims)
+    A = np.zeros(nsims); B = np.zeros(nsims)
+    A = A0*np.exp((r-qA - sigA**2/2)*T + sigA*np.sqrt(T)*myout[:,0])
+    B = B0*np.exp((r-qB- sigB**2/2)*T + sigB*np.sqrt(T)*myout[:,1])
+    payout = np.maximum(A-B, 0)*np.exp(-r*T)
+    ans = payout.mean()
+    return ans
+    
+A0 = 50.0; B0 = 50.0; sigA = 0.20; sigB = 0.20; rhoAB = 1.0; T = 1; r = 0.05; qA = 0.0; qB = 0.0; nsims = 1000
+    
+ans = sim_exchange_call(A0, B0, sigA, sigB, rhoAB, T, r, qA, qB, nsims)    
+#C0 = BS_call(A0, A0*np.exp(r*T), T, r, q, sigA)
+print('price of exchange option is ', round(ans, 3))
+There are many exotic options you can price.
+For example consider a rainbow option.
+Max(Max[A(T)/A(0),B(T)/B(0),C(T)/C(0),D(T)/D(0)]−X,0)×N
+To price this option you need to know the correlation between the stocks and the volatility of the stocks and the riskless rates as well as the dividend yields on each stock.
+
+To estimate these values we would need historical data on the 4 firms
+
+We will see that this is very easy to bring into Python.
+So estimating the parameters will not be a big issue.
+We then can use Monte Carlo Simulation to price this contract.
