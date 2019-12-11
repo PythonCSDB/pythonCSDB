@@ -219,3 +219,411 @@ print(str.lower())
 
 
 
+
+Jupyter Notebook
+HW2solns_If_and_for_statements
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+In this HW set you will apply knowledge on
+conditional statements, if.... elif.... else.....
+Loops using range command
+Loops with strings and Lists
+list comprehension
+Other topics where you will have to research on your own
+Question 1
+Conditionals
+Study the following code:
+
+# statement A
+if x > 0:
+    # statement B
+    pass
+elif x < 0:
+    # statement C
+    pass
+else:
+    # statement D
+    pass
+# statement E
+Which of the statements above (A, B, C, D, E) will be executed if x < 0?
+Which of the statements above will be executed if x = 0?
+Which of the statements above will be executed if x > 0?
+Which of the statement(s) will execute regardless of the condition satisfied?
+​
+Solution
+statement C
+statement D
+statement B
+statements A and E
+Question 2
+Loops
+Write a program to have the user input three (3) numbers: (f)rom, (t)o, and (i) ncrement. Count from f to t in increments of i, inclusive of f and t. For example, if the input is f == 2, t == 26, and i == 4, the program would output: 2, 6, 10, 14, 18, 22, 26.
+
+mylist = []
+f = int(input("Emter number: from --> "))
+t = int(input("Enter number: to --> "))
+i = int(input("Enter number: increment --> "))
+for x in range(f, t + 1, i):
+    mylist.append(x)
+print("")
+print(mylist) 
+Emter number: from --> 1
+Enter number: to --> 3
+Enter number: increment --> 1
+
+[1, 2, 3]
+Question 3
+range(). What argument(s) could we give to the range() built-in function if we wanted the following lists to be generated?
+
+[ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+[ 3, 6, 9, 12, 15, 18 ]
+[ -20, 200, 420, 640, 860 ]
+Solution
+start = 0, stop = 10 or simply pass 10 as argument like so: range(10)
+start = 3, stop = 19, step = 3
+start = -20, stop = 861, step = 220
+L = []
+for x in  range(0, 10):
+    L.append(x)
+print(L)
+L = []
+for x in range(3, 19, 3):
+     L.append(x)
+print(L)
+​
+L = []
+for x in range(-20, 861, 220):
+     L.append(x)
+print(L)
+​
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[3, 6, 9, 12, 15, 18]
+[-20, 200, 420, 640, 860]
+Question 4
+Create a list starting at 1 and ending at 22 and print it out in one line
+
+L =list(range(1, 23))
+print(L)
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+Type Markdown and LaTeX: α2
+Question 5
+use the for and .split() and if statement to get a list of all the words starting with T in the sentence
+
+mystring = 'This is a tasty Tuesday worth ten dollars. Tomorrow I will tell Tilly to come and play Tennis'
+
+mystring = 'This is a tasty Tuesday worth ten dollars. Tomorrow I will tell Tilly to come and play Tennis'
+mylist = mystring.split()
+my_T_list = []
+for word in mylist:
+    if (word[0] == 'T'):
+        my_T_list.append(word)
+print(my_T_list)
+['This', 'Tuesday', 'Tomorrow', 'Tilly', 'Tennis']
+#extend the above problem to include all words begining with T or t.
+mystring = 'This is a tasty Tuesday worth ten dollars. Tomorrow I will tell Tilly to come and play Tennis'
+mylist = mystring.split()
+my_Tt_list = []
+for word in mylist:
+    if (word[0] == 'T' or word[0] == 't'):   # or word[0].lower() == 't'
+        my_Tt_list.append(word)
+print(sorted(my_Tt_list))
+​
+['Tennis', 'This', 'Tilly', 'Tomorrow', 'Tuesday', 'tasty', 'tell', 'ten', 'to']
+Question 6
+"Factors" are the numbers you multiply to get another number. For instance, factors of 15 are 3 and 5, because 3×5 = 15. 12 can be factored as 1×12, 2×6, or 3×4. A number that can only be factored as 1 times itself is called "prime". Given an integer, establish all of its factors. eg Factors of 12 are ( 1, 2, 3, 4, 6, 12)
+
+mynum = int(input('enter a number between 1 and 2500   '))
+out =[]
+for fac  in range(1, mynum+1):
+    rem = mynum%fac
+    if rem == 0:
+        out.append(fac)
+print(out)
+enter a number between 1 and 2500   2
+[1, 2]
+Question 7
+In one line of code print out all the numbers between 0 and 40 that are divisible by 4
+Use list comprehension, the range command and if command
+[x for x in range(0,41) if x%4 == 0]
+[0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40]
+Question 8
+Print the integers from 1 to 100. However, if a value is a multiple of 3 print 'Three" and if it is a multiple of 5, print 'Five' and if it is a multiple of both print 'thrive'  
+L = []
+for num in range(1, 26):
+    if (num%3 ==0  and num%5 ==0):
+        ans = 'thrive'
+    elif(num%3 == 0):
+        ans = 'three'
+    elif(num%5 == 0):
+        ans = 'five'
+    else:
+        ans = num
+    
+    
+    L.append(ans)
+print(L)
+            
+[1, 2, 'three', 4, 'five', 'three', 7, 8, 'three', 'five', 11, 'three', 13, 14, 'thrive', 16, 17, 'three', 19, 'five', 'three', 22, 23, 'three', 'five']
+Question 9
+Arguments
+Compare the following three functions:
+
+def countToFour1():
+    for eachNum in range(5):
+        print eachNum,
+
+
+def countToFour2(n):
+    for eachNum in range(n, 5):
+        print eachNum,
+
+
+def countToFour3(n=1):
+    for eachNum in range(n, 5):
+        print eachNum,
+What do you think will happen as far as output from the program, given the following input values? Enter the output into Table below
+
+input	countToFour1	countToFour2	countToFour3
+2	|		
+4	|		
+5	|		
+Solution
+input	countToFour1	countToFour2	countToFour3
+2	TypeError	2,3,4	2,3,4
+4	TypeError	4	4
+5	TypeError	None	None
+Question 10: constructing tuples using zip command
+What is a tuple? Use google to learn about tuples. Type in tuples in python
+Say you have a pair of identically sized lists, say [1, 2,3,4,5,6] , and ['a', 'b', 'c', 'd', 'e', 'f']. merge both lists into a single list consisting of tuples of elements of each list so that our result looks like: {[(1, 'a'), (2,'b'), (3, 'c'), ...}.
+HInt use the zip function to create the tuples and list() to print them out.
+
+mytuples =(zip([1,2,3],['a','b','c']))
+print(mytuples)
+list(mytuples)
+<zip object at 0x000001EDD2D23D88>
+[(1, 'a'), (2, 'b'), (3, 'c')]
+Question 11:
+The following pieces of code is kludgy. That is they are correct but not pythonic. ie not beautiful!
+Rewrite it using list comprehensions.
+Google List Comprehension as well.
+Compute first 20 powers of 2
+i = 0
+powers = []
+while i < 20:
+ p = 2 ** i
+ powers.append(p)
+ i = i + 1
+#1. 
+[2**i for i in range(20)]
+[1,
+ 2,
+ 4,
+ 8,
+ 16,
+ 32,
+ 64,
+ 128,
+ 256,
+ 512,
+ 1024,
+ 2048,
+ 4096,
+ 8192,
+ 16384,
+ 32768,
+ 65536,
+ 131072,
+ 262144,
+ 524288]
+Question 12:
+The following pieces of code is kludgy. That is it is correct but not pythonic. ie not beautiful!
+Rewrite it using list comprehensions.
+import math
+#first 14 k-digit approximations of pi
+approximations = []
+i = 1
+while i <= 14:
+ approx = round(math.pi, i)
+ approximations.append(approx)
+ i =i+ 1
+#2.
+import math
+[round(math.pi, i) for i in range(1,15)]
+[3.1,
+ 3.14,
+ 3.142,
+ 3.1416,
+ 3.14159,
+ 3.141593,
+ 3.1415927,
+ 3.14159265,
+ 3.141592654,
+ 3.1415926536,
+ 3.14159265359,
+ 3.14159265359,
+ 3.1415926535898,
+ 3.14159265358979]
+Question 13:
+The following pieces of code is kludgy. That is they are correct but not pythonic. ie not beautiful!
+Rewrite it using list comprehensions.
+Generate all (x, y, z) coordinates from three lists
+xpoints = [1, 2, -1]
+ypoints = [8, 4, 3, 0]
+zpoints = [0, -1]
+points = []
+for x in xpoints:
+ for y in ypoints:
+     for z in zpoints:
+         points.append((x, y, z))
+#3.
+[(x,y,z) for x in [1, 2, -1] for y in [8, 4, 3, 0] for z in  [0, -1]]
+​
+[(1, 8, 0),
+ (1, 8, -1),
+ (1, 4, 0),
+ (1, 4, -1),
+ (1, 3, 0),
+ (1, 3, -1),
+ (1, 0, 0),
+ (1, 0, -1),
+ (2, 8, 0),
+ (2, 8, -1),
+ (2, 4, 0),
+ (2, 4, -1),
+ (2, 3, 0),
+ (2, 3, -1),
+ (2, 0, 0),
+ (2, 0, -1),
+ (-1, 8, 0),
+ (-1, 8, -1),
+ (-1, 4, 0),
+ (-1, 4, -1),
+ (-1, 3, 0),
+ (-1, 3, -1),
+ (-1, 0, 0),
+ (-1, 0, -1)]
+ans = 1
+answer = ('A', 'B')[ans == 2]
+print(answer)
+A
+Question 14
+Ask the user to enter a number between 1 and 20.
+Verify that the number is less than 20.
+Once verified, square the number if it is even, or multiply it by 3 if it is odd.
+​
+num = int(input('Please enter a number between 1 and 20   '))
+if num >= 1 and num <= 20: #conditional statement that ensures limit is between 1 and 20.
+    # Block 1 follows 
+    
+        print("You have entered a valid number")
+        if num % 2 == 0: #test for even/odd
+                 print("Your number is even")
+                 print('yoor answer is ', num**2)
+        
+        elif num % 2 == 1: #test for even/odd
+                 print("Your number is odd")
+                 print('Your answer = ', num * 3)
+else:
+    #Block 2 follows 
+        print("You've entered an invalid number")
+        
+​
+​
+Please enter a number between 1 and 20   12
+You have entered a valid number
+Your number is even
+yoor answer is  144
+Question 15
+Let’s say we have a list of positive and negative numbers and we want to print only the negative numbers from the list.
+Since we have a list, we’ll need to use a for loop to go through each item in the list.
+Combined with an if statement, we can create this program as follows:
+nglist = []
+number_list = [21, -13, 14, -8, 9, 0, -0.5] #creates a list of numbers
+for num in number_list: #goes through each number (num) in the number list
+           if num < 0: #checks whether number is negative
+                  nglist.append(num)
+                
+print(nglist)
+[-13, -8, -0.5]
+Question 16
+Create a program that checks whether a user name belongs to a list of authorized users
+
+authorized_users = [ 'george', 'john' , 'paul',  'ringo'] #create list of authorized users
+user_name = input("Please enter your user name here: ") #ask for user input
+if user_name in authorized_users: #check whether user input is a part of authorized users list
+         print("Access granted")
+else:
+         print("We've issued a security alert")
+Please enter your user name here: 2
+We've issued a security alert
+Question 17
+​
+# Run this program  to learn how to print on the same line
+# array
+a = [1, 2, 3, 4]
+ 
+# printing a element in same
+# line
+for i in range(4):
+    print(a[i], end =" ") 
+​
+# Now solve the following problem
+#Write a Python program to construct the following pattern, using a nested for loop.
+​
+* 
+* * 
+* * * 
+* * * * 
+* * * * * 
+* * * * 
+* * * 
+* * 
+*
+n=5;
+for i in range(n):
+    for j in range(i):
+        print ('* ', end="")
+    print('')
+​
+for i in range(n,0,-1):
+    for j in range(i):
+        print('* ', end="")
+    print('')
+​
+
+* 
+* * 
+* * * 
+* * * * 
+* * * * * 
+* * * * 
+* * * 
+* * 
+* 
+Question 18
+Write a Python program that prints all the numbers from 0 to 6 except 3 and 6. (Note : Use 'continue' statement.)
+
+for x in range(6):
+    if (x == 3 or x==6):
+        continue
+    print(x,end=' ')
+​
+0 1 2 4 5 
+​
+
+
+
+
+
+
+
