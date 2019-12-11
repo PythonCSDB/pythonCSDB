@@ -1,0 +1,178 @@
+Jupyter Notebook
+Homework_Portfolio-Problems
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+Homework
+MAKE A COPY OF THIS BEFORE STARTING!!!!!!!!!!!!!!
+
+Question 1
+From quandl read in the adjusted closing prices for the following stocks from January 1st 2012 to January 17th 2017
+The stocks are General Electric GE; Nike NKE; Ford F; General Motors GM; Citigoup C; Rite Aid RAD.
+This will give you 6 dataframes
+import pandas as pd
+import quandl
+import matplotlib.pyplot as plt
+%matplotlib inline
+import numpy as np
+start = pd.to_datetime('2012-01-01')
+end = pd.to_datetime('2017-01-01')
+mynames = ['GE', 'NKE','F','GM','C','R']
+​
+​
+Question 2
+Create one dataframe with all the prices. Do this in a way that you could extend your analysis to handle N stocks where N could be large.
+​
+​
+​
+​
+Question 3
+Create N colums in the dataframe for the cumulative return, starting at 1.
+Create N other columns for the logarithmic returns for the Nindividual stocks.
+So for the case N = 6 you should end up with 12 new columns with nice labels for their names.
+​
+Question 4
+Now Create a new Dataframes from this big Dataframe. The first called Prices contain the prices
+The second called CReturns gives the accumulated returns
+The third gives the log returns.
+​
+.......
+CReturns.head()
+.......
+Returns.head()
+Question 5
+Plot out the histograms of returns
+Plot out the cumulative returns
+Returns.hist(bins=100,figsize=(12,6), grid = False);
+plt.tight_layout()
+CReturns.plot(kind = 'line')
+Question 6
+use the returns DataFrame to do the following
+First split the dataset into two. Call them insample and outsample.
+Using the insample data construct the variance covariance matrix
+Using the Variance-Covariance matrix, print out the standard deviations of annualized returns.
+​
+​
+insample.tail()
+outsample.head()
+ACout.head()
+​
+​
+​
+Question 7
+Use the mean vector and the Variance Vector of the historical data set to establish the best portfolio with an expected return of 20%
+def mean_portfolio(weights):
+    global mus, V
+    weights = np.array(weights)
+    return  np.dot(weights, mus)
+​
+def sig_portfolio(weights):
+    global mus, V
+    Vtemp = np.dot(weights,V)
+    wT = np.array(weights)
+    wT = wT.T
+    Vout = np.dot(Vtemp,wT)
+    sigp = np.sqrt(Vout)
+    return sigp
+​
+​
+weights =[0.25,0.25,0.25,0.25, 0.25, 0.25]
+meanp = mean_portfolio(weights)
+sigp =  sig_portfolio(weights)
+​
+print meanp, sigp
+import scipy.optimize as sco
+​
+# Setup the constraints
+#The first constraint is that the sum of the weights add up to one.
+#The second constraint states that the expected return is a given constant equal to tret
+​
+​
+# Stuff Here
+​
+bnds = tuple((0, 1) for x in weights)
+wt = 6
+wt = wt*[1.0/wt]
+​
+print ' The optimal portfolio is ', result.x
+print 'The std. deviation of this portfolio is', result.fun
+xstar = result.x
+type(xstar)
+Question 8
+Now using the weights evaluate the performance of the portfolio over the outsample.
+Compare the performance of this portfolio to a portfolio containing equal weights in all assets
+ACout.head()
+# We need to export outsample out to a numpy array and then multiply it by xstar
+​
+myarray = np.array(ACout.values)
+myarray.shape
+xbench = [1./6, 1./6, 1./6 ,1./6, 1./6, 1./6]
+mytotal = myarray*xstar
+mybenchmark = myarray*xbench
+myans = mytotal.sum(axis = 1)
+mybench = mybenchmark.sum(axis = 1)
+# myans has the accumulated performance of the portfolio.
+# We now have to create a dataFrame.
+# Since we have Acout
+​
+ACout['perform']= myans
+ACout['bench']= mybench
+Acfinal = ACout[['perform', 'bench']]
+Acfinal.plot(kind = 'line')
+​
+Question 9
+Simulate 2000 possible mean and returns using the insample data
+Plot this data
+Identify the portfolio with the highest sharpe ratio
+Draw a straight line from (0,0) through this point.
+# Monte Carlo simulation of portfolio compositions
+ret = []
+vols = []
+sharp=[]
+​
+​
+for w in range(2000):
+    weights = np.random.random(6)
+    weights = weights/sum(weights)
+       
+    meanp = mean_portfolio(weights)
+    sigp = sig_portfolio(weights)
+    ret.append(meanp)
+    vols.append(sigp)
+    sr = meanp/sigp
+    sharp.append(sr)
+​
+sharp1 = pd.Series(sharp)
+ind = sharp1.idxmax()
+# We have the index of the best
+bestvol = vols[ind]
+bestmean = ret[ind]
+​
+ret = np.array(ret)
+vols = np.array(vols)
+​
+​
+plt.figure(figsize=(12,8))
+plt.scatter(vols,ret,c=sharp,cmap='plasma')
+plt.colorbar(label='Sharpe Ratio')
+plt.xlabel('Volatility')
+plt.ylabel('Return')
+​
+# Add red dot for max SR
+plt.scatter(bestvol,bestmean,c='red',s=50,edgecolors='black')
+​
+p1 = [0,0]
+p2 = [bestmean,bestvol]
+x1, y1 = [0,bestvol], [0,bestmean]
+x2, y2 = [0, 2*bestvol], [0,2*bestmean]
+plt.plot(x1, y1, x2, y2)
+​
