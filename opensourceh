@@ -1,0 +1,221 @@
+Jupyter Notebook
+Homework1Q_Solutions
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+Homework 1: Basic Data Types
+This HW set is about data types:
+
+ 1. Integers, Floats, Strings, Booleans, Lists, Dictionaries....
+ 2. You need to be able to identify the type of object you are dealing with.
+ 3. You may want to change the object type.
+ 4. You should know which object types are mutable.
+ 5. You should know some of the basic methods available for each object type.
+ 6. You should understand slicing operations and Boolean operations.
+ 7. You should understand some of the methods for Lists and Dictionaries.
+ 8. You should know how to get input from the terminal  using the input command and how to format and print output.
+ 9. You should know how change the type of a data type( eg a string to an integer) 
+If you run into problems Use Google as your assistant.
+
+Question 1:
+Create the following variables:a = 52, b = 6.25, c = 'string'
+
+convert a to a type string and then to type float
+convert b to string. Can the result be converted to integer? why or why not?
+how can we concatenate a and c? Now combine a and c into one string
+#help: to convert a number to a string  a_string = str(a_number)
+#To print out the type of variable: type(a_string)
+# If you are unsure of a statement ask Google....eg "convert a string to a float in python"
+a = 52
+b = 6.25
+c = 'string'
+​
+# convert a into a string
+astring = str(a)
+print astring, type(astring)
+​
+# now convert the string into a float
+afloat = float(astring)
+print afloat, type(afloat)
+​
+#convert b into a string
+bstring = str(b)
+print bstring, type(bstring)
+​
+#now convert it into an integer
+​
+bstrfloat = float(bstring)
+bint = int(bstrfloat)
+print bint, type(bint)
+​
+#concatenate a and b
+print astring+bstring
+​
+bint2 = int(b)
+print bint2
+​
+Question 2:
+Create a program that asks the user to enter their name and their age. Print out a message addressed to them that tells them the year that they will turn 100 years old.
+
+name = input("What is your name:")
+age = int(input("How old are you: "))
+year = str((2018 - age)+100)
+print(name + " will be 100 years old in the year " + year)
+Question 3
+Read in the following string "I am hoping to become an ace programmer" Then find methods that will
+
+capitalize each letter in the string
+count the number of p's in the string
+use the len() function to establish the length of the string
+print out the 18th charachter
+print out the 18th to 22nd character including the 22th
+#1.
+msg = 'I am hoping to become an ace programmer'
+msg.upper()
+​
+#2.
+msg.count('p')
+#3.
+len(msg)
+​
+#4.
+print(msg[17])
+​
+#5.
+print(msg[17:22])
+​
+​
+​
+Question 4: Printing using f strings
+let x = 'Jack' let y = 'Jill'
+
+Using format string literal method( ie f...... to print out the following
+
+print the following out using f string, where question marks are replaced by x and y
+'Hello everyone, my name is ?????, and I am married to ????
+
+x = 'Jack'
+y = 'Jill'
+print(f'Hello everyone, my name is {x} and I am married to {y}')
+Question 5: Boolean Operations
+True and True
+False and True
+1 == 1 and 2 == 1
+"test" == "test"
+1 == 1 or 2 != 1
+True and 1 == 1
+False and 0 != 0
+True or 1 == 1
+"test" == "testing"
+1 != 0 and 2 == 1
+not (True and False)
+3 == 3 and not ("testing" == "testing" or "Python" == "Fun")
+not(True and False)
+Question 6: Lists
+Create a list of ['orange', 'apple', 'pear', 'banana', 'kiwi', 'apple', 'banana']
+Count the number of times apple appears
+Count the number of times tangerine occurs.
+What is the index of banana
+Find the next index of banana
+reverse the list and print it out
+Add grapes to the list
+Sort the list and print it out
+create a list with two more fruits ['plum', 'peach']
+add the elements of this list to our original list
+What is the third and fourth elements of the new sorted list.
+fruits = ['orange' 'apple', 'pear', 'banana', 'kiwi', 'apple', 'banana']
+print('Q2', fruits.count('apple'))
+print('Q3', fruits.count('tangerine'))
+# What is the index of 'banana
+print('Q4', fruits.index('banana'))
+# Find the next index of banana
+print('Q5', fruits.index('banana', 4))  # Find next banana starting a position 4
+fruits.reverse()
+print('Q6', fruits)
+# Add grapes to the list 
+fruits.append('grape')
+print('Q7', fruits)
+print('Q8', fruits.sort())
+more = ['plums', 'peaches']
+fruits.extend(more)
+print('Q9', fruits)
+fruits.sort()
+print('Q10', fruits)
+print('Q11',fruits[2:4])
+Question 7: Dictionaries
+Create a dictionary with key words Name, Age, Score and associated values 'Zara', 10, 34.5
+Now change the score to 50.0
+Remove a key called Age
+Print out the number of Key-value pairs in the dictionary 5.Check if a key exits with the name 'Age'
+Check if a key exists with the name 'Score'
+Retrieve the test score
+print out the keys of the dictionary
+Create a second dictionary {'Name':'Zeneth', 'Age': 10.0, 'Score': 30.0}
+Create a list of these two dictionaries.
+Write a program that gets the scores from the dictionaries in the list and adds them together. If you are smart, once you have made up the list, you could do this in one line of code.
+mydic = {'Name':'Zara', 'Age': 10.0, 'Score': 34.5}
+mydic['Score']= 50.0
+print('Q1&Q2', mydic)
+del(mydic['Age'])
+print('Q3',mydic)
+print('Q4', len(mydic))
+ans = "Age"in mydic
+print('Q5', ans)
+ans = "Score"in mydic
+print('Q6', ans)
+print('Q7', mydic['Score'])
+print('Q8', mydic.keys())
+​
+mydic2 = {'Name':'Zeneth', 'Age': 10.0, 'Score': 30.0}
+mylist = [mydic, mydic2]
+t1 = mylist[0]
+s1 = t1['Score']
+t1 = mylist[1]
+s2 = t1['Score']
+print('Total score=',s1+s2)
+#Or perhaps 
+mydic2 = {'Name':'Zeneth', 'Age': 10.0, 'Score': 30.0}
+mylist = [mydic, mydic2]
+print( mylist[0]['Score']+ mylist[1]['Score'])
+Question 8
+Write a Python script to deliver a string made of the first 2 and the last 2 chars from a given a string that is more than 5 characters long
+help: How do you identify the first character of a string. How do you get the length of a string.
+The last two elements of a string are a_string[-2:]
+Review referencing of elements in a string....Find information on google.
+mystring = 'This is my string'
+first = mystring[0:2]
+last = mystring[-2::]
+print( first + last)
+​
+Question 9
+Write a Python function to generate a string from a given string where all occurrences of its first char, except the first character have been changed to '$'.
+str1 = 'this is my string. I wonderif tom will get this  thing to work'
+char = str1[0]
+str1 = str1.replace(char, '$')
+str1 = char + str1[1:]
+print(str1)
+​
+Question 10
+Write a Python script that takes input from the user and displays that input back in upper and lower cases.
+str=input("enter a sentence:")
+print(str.upper())
+print(str.lower())
+​
+​
+​
+
+
+
+
+
+
+
