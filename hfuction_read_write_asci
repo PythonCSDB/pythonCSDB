@@ -1,0 +1,490 @@
+Jupyter Notebook
+Functions_HW_Solutions
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+Homework: Functions
+For several of these problems, think of a cell as containing a function.
+Then ask yourself what does the function need as input and what will it deliver.
+Use Google as your assistant.
+Prerequisites:
+You need to know how to use a function,
+how to manipulate integers, floats, and strings
+You need to know loops, for statement etc.
+You need to know Lists
+Question 1
+Write a Python function to deliver a string made of the first 2 and the last 2 chars from a given a string.
+If the string length is less than 2, return instead the empty string.
+# help: How do you identify the first character of a string. How do you get the length of a string.
+# The last two elements of a string are a_string[-2:]
+# Review referencing of elements in a string....Find information on google.
+def string_both_ends(str):
+    if len(str) < 2:
+        return ''
+ 
+    return str[0:2] + str[-2:]
+
+
+mystring = 'absdgergajk'
+
+ans = string_both_ends(mystring)
+print(ans)
+def string_both_ends(str):
+    if len(str) < 2:
+        return ''
+ 
+    return str[0:2] + str[-2:]
+​
+​
+mystring = 'absdgergajk'
+​
+ans = string_both_ends(mystring)
+print(ans)
+Question 2
+Write a Python function to get a string from a given string where all occurrences of its first char have been changed to '$', except the first char itself.
+def string_convert(str1):
+    char = str1[0]
+    str1 = str1.replace(char, '$')
+    str1 = char + str1[1:]
+    return str1
+​
+mystring = 'once upon a time oscar fooled in class and honestly never got into trouble'
+adjusted = string_convert(mystring)
+print(adjusted)
+​
+Question 3
+Write a Python script that takes input from the user and displays that input back in upper and lower cases.
+mystr=input("enter a sentence:")
+print(mystr.upper())
+print(mystr.lower())
+​
+Question 4
+Write a Python program that accepts a comma separated sequence of words as input and prints the unique words in sorted form (alphanumerically). Sample Words : red, white, black, red, green, black Expected Result : black, green, red, white,red
+#Hint for question 4: Use the split command....Then you will have a sequence  of words.
+# Create an empty list and append each word to that list so you end up with a List of strings ( words)
+# Now use a built in command to sort the list. Ask Google for the appropriate method or use shift tab.
+# Once you have a list 
+    
+# This question requires LISTS
+​
+mywords = "get,wow,apple,beta,casa,pasa,apple,wow"
+mywords = mywords.split(",")
+mylist = []
+for wrd in mywords:
+    if ( wrd not in mylist):
+        mylist.append(wrd)
+mylist.sort()
+print(mylist)
+​
+Question 5
+Create a small script to use raw_input() built-in function to take a string input from the user, then display to the user what he/she just typed in.
+
+Add another piece of similar code, but have the input be numeric. Convert the value to a number (using either int() or any of the other numeric conversion functions), and display the square of the value back to the user.
+
+x = input('Please enter a string: ')
+print("You entered:  ",  x)
+​
+​
+x = float(input("Please enter a number"))
+print('The square of the number entered is: ',  x**2)
+Question 6
+Write a function name_db that asks the user to input a list of names, in the format "Last Name, First Name," i.e., last name, comma, first name.
+
+If the user types the names in the wrong order, i. e., "First Name Last Name," the error should be corrected, and the user notified.
+
+When the user is done, sort the list, and display the sorted names in "Last Name, First Name" order.
+
+​
+def name_db():
+    number_names = int(input("How many  names will you enter?: "))
+    db =[]
+    for i in  range(1,number_names+1):
+        name = input('Please enter name {count}: '.format(count = i))
+        if ',' not in name:
+            print('Wrong format... should be `LastName , First Name`.')
+            print(' It has been corrected')
+            name = name.split(' ')
+            last, first = name[1], name[0]
+            db.append((last,first))
+        else:
+            db.append(tuple(name.split(',')))             
+    db.sort()
+    print(db)
+    return db
+​
+db = name_db()
+ 
+#print db
+for i, (Last, First) in enumerate(db):
+    print(i+1, Last, First)
+Question 7
+Write a function to take a positive integer grade as input. Then you have to change it to letter grade. At last, you have to print the original grade and letter grade.
+If the student get an 'F', you have to print another sentence "Come on !".
+The rule of changing numerical grade to letter is : A: 85-100; B: 70-85; C: 60-70; D: 55-60; F: <55
+def grader(score):
+    if 85 < score and score <= 100:
+        print('A ', score)
+    elif 70 < score and score <= 85:
+        print('B ', score)
+    elif 60 < score and score <= 70:
+        print('C ', score)
+    elif 55 <= score and score <= 60:
+        print('D ', score)
+    else:
+        print('D ', score)
+        print("Come on!")
+grader(50)
+​
+Question 8
+Write a function to return Fibonacci Sequence numbers.
+Fibonacci sequence numbers are as follows: 1, 1, 2, 3, 5, 8, 13, 21, 34, ...From the 3rd number, each number is the summation of previous two numbers.
+Hint...Set up a first function that takes in two numbers and computes the next number....There are two ways of doing this....Iteration or recursion. Try both.....Then set up a second function that uses the first to get all the numbers up to the inputed number. Start off with an empty list and keep appending.
+## Example 1: Using looping technique
+def fib(n):
+    a,b = 1,1
+    for i in range(n-1):
+        a,b = b,a+b
+    return a
+print(fib(5))
+​
+#or
+## Example 2: Using recursion
+def fibR(n):
+    if n==1 or n==2:
+        return 1
+    else:
+     return fibR(n-1)+fibR(n-2)
+print(fibR(5))
+​
+def fibonacci(n):
+    out = []    
+    for i in range(1, n+1):
+        out.append(fib(i))
+    return out
+​
+fibonacci(8)
+​
+Question 9
+Write a function my_sort to sort the input array and output it in ascending order. (The input array is a list.)
+Note: Do not use the sort functions in python
+#This can be done in  a much more optimal  way
+def my_sort(mylist):
+    out = []
+    length = len(mylist)
+    for i in range(length):
+        small_num = min(mylist)
+        out.append(small_num)
+        mylist.remove(small_num)
+    return out
+​
+my_sort([50, 23, 4,34])
+Question 10
+write a function eliminate_elements that takes in a list, s, and a list, exclude.
+It should return a new list that contains all the elements in s that are not equal to exclude.
+def eliminate_elements(full, exclude):
+    for element in exclude:
+        full.remove(element)
+    return full
+​
+eliminate_elements([1, 3, 2,-1], [1,-1])
+Question 11
+Write a function that returns F(x)=a1x2+a2x+a3 if x is even and b1x2+b2x+b3 if x is odd.
+The function has default values for a2, a3, b2 and b3 of 0.
+
+The inputs are a tuple (a1, b1) at a minimum and three tuples at a maximum (a1, b1), (a2, b2) ( a3, b3)
+
+def F(x, tup1, tup2 = (0,0), tup3 = (0,0)):
+    a1 = tup1[0]
+    b1 = tup1[1]
+    a2 = tup2[0]
+    b2 = tup2[1]
+    a3 = tup3[0]
+    b3 = tup3[1]
+    if x%2 == 0:
+        return a1*x**2 + a2*x + a3
+    else:
+        return b1*x**2 + b2*x + b3
+F(3, (1,2), (1,1), (1,10))
+​
+Question 12
+Write a Python function that accepts a string and calculate the number of upper case letters and lower case letters.
+
+def string_test(s):
+    mydict ={"UPPER_CASE":0, "LOWER_CASE":0}
+    for c in s:
+        if c.isupper():
+            mydict["UPPER_CASE"]=mydict["UPPER_CASE"]+ 1
+        elif c.islower():
+            mydict["LOWER_CASE"]+=1
+        else:
+            pass
+    print("Original String : ", s)
+    print("No. of Upper case characters : ", mydict["UPPER_CASE"])
+    print("No. of Lower case Characters : ", mydict["LOWER_CASE"])
+​
+string_test('I wAnt TO play UplowW')
+​
+Question 13
+Write a Python function that takes a list and returns a new list with unique elements of the first list.
+
+def unique_list(mylist):
+    x = []
+    for a in mylist:
+        if a not in x:
+            x.append(a)
+    return x
+​
+print(unique_list([1,2,'dog',3,3,'pi',4,'dog'])) 
+Question 14
+Write a program which will find all such numbers which are divisible by 7 but are not a multiple of 5, between 2000 and 3200 (both included). The numbers obtained should be printed in a comma-separated sequence
+
+Hint look at the 'X'.join(mylist)
+
+def special_numbers():
+    mylist =[]
+    for i in range(2000, 3201):
+        if (i%7==0) and (i%5!=0):
+            mystring = str(i)
+            mylist.append(mystring)
+    print(','.join(mylist))
+    return
+​
+special_numbers()
+Question 15
+With a given integral number n, write a program to generate a dictionary that contains (i, i*i) such that is an integral number between 1 and n (both included). and then the program should print the dictionary. Suppose the following input is supplied to the program: 8 Then, the output should be: {1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64}
+
+def mydict():
+    num = int(input('Enter a Number <20 '))
+    mydict = {}
+    for i in list(range(1,num+1)):
+        mydict[i]= i*i
+    print(mydict)
+    return
+mydict()
+Question 16
+The formula for pricing a stock option is given by
+
+C=SN(d1)−Xe−rtN(d2)
+where
+
+d1=ln(S/X)+(r+0.5σ2)TσT⎯⎯⎯√
+d2=d1−σT⎯⎯⎯√
+Here
+
+S is the stock price ( eg ( S = 50)
+X is the strike price (eg X = 55)
+T is the time to expiration in years ( eg T = 0.5)
+r is the risk free rate ( eg 0.05)
+σ is the volatility ( eg σ=0.20)
+THis equaton is called the Black Scholes equation.
+
+Establish a function that takes in the inputs and returns the price of the option.
+C=C(S,X,T,r,$σ)
+Help: You need to import eg from math import sqrt, log
+
+Somehow you need to get the cumulative normal function, N(x) See if you can get this using google.
+
+def black_scholes(s, x, T, r, sigma):
+    from math import exp, sqrt,log
+    from scipy  import stats
+    # Black-Scholes-Merton Call Calculation
+    # Input Variable:
+    # s--Stock Price; x--Exercise Price; rf--Risk Free Rate;
+    # T--Time to Maturity; sigma--Volatility; 
+    
+    
+​
+    
+    d1 = (log(s /x)+(rf + 0.5 * sigma ** 2) * T) / (sigma * sqrt(T))
+    d2 = d1 - sigma * (sqrt(T))
+    Nd1 = stats.norm.cdf (d1,0.0,1.0)
+    Nd2 = stats.norm.cdf (d2,0.0,1.0)
+    c0 = s*Nd1 - x*exp(-rf*T)*Nd2
+    return  c0
+​
+S = 100.0;x= 100.0; T = 1.0; rf= 0.03; sigma = 0.30           
+​
+callp = black_scholes(S, x, T, rf, sigma)           
+​
+print('Call Price = ', round(callp,2))
+Question 17
+Write a function that accepts a sequence of whitespace separated words as input and prints the words after removing all duplicate words and sorting them alphanumerically.
+
+Suppose the following input is supplied to the program:
+
+hello world and practice makes perfect and hello world again Then, the output should be: again and hello makes perfect practice world
+
+Hint: I would like you to break the string into a list of words. Then I would like you to use the set data structure to get rid of duplicates. Create a list from that set, sort the list and then use the ' 'join statement to get a string containing the unique alphabetically sorted words.
+
+def remove_duplicates(mystring):
+    words = [word for  word in mystring.split(" ")]
+    print(words)
+    return ' '.join(sorted(list(set(words))))
+​
+mystring = 'hello world and practice makes perfect and hello world again'
+ans = remove_duplicates(mystring)
+print(ans)
+Congratulations!
+
+
+
+
+
+
+****************************************
+
+Jupyter Notebook
+Problems_solutions_reading_writing
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+Reading and Writing Text Files in Python
+Question 1
+Copy this text into a txt file. Make sure the file is in the same folder as this Python notebook. Each sentence should be on a new line. So your file will have 4 lines.
+Our models not only build on the stream of dynamic capital structure analyses to include frictions imposed by BEE regulations, but also on a stream of literature involving stock based lending. Rather than sell shares, borrowers provide their shares as collateral to lenders and in return receive a lower interest rate. In these transactions the dividends from the stock may be used to pay down the loan. A very interesting literature has emerged regarding how these deals can be valued by translating the problem to that of evaluating complex American call options.
+
+create a function read_from_file( filename) a. This function reads this text file into the notebook
+def read_from_file(fname):
+    f = open(fname, 'r')
+    str_list = f.readlines()
+    for a_line in str_list:
+        print(a_line.strip('\n')) 
+    f.close()
+    
+read_from_file('myfile11')    
+    
+Question 2
+create a function, read_nlines_from_file( filename, nlines) that reads the first nlines
+def read_nlines_from_file(fname, nlines):
+    f = open(fname, 'r')
+    str_list = f.readlines()
+    #print(str_list)
+    
+    
+    for i in range(nlines):
+        aline = str_list[i]
+        print(aline.strip('\n'))
+    f.close()
+    
+read_nlines_from_file('myfile11', 1)   
+Question 3
+Write a Python function, file_read_return_list(fname), to read a file line by line and store it into a list that is returned.
+Use the with command to open the file.
+Print out the second line only. ( Use the text file in Question 1 and 2)
+def file_read_return_list(fname):
+        with open(fname) as f:
+                #Content_list is the list that contains the read lines.     
+                content_list = f.readlines()
+                return content_list
+​
+content_list = file_read_return_list('myfile11')
+print(content_list)
+Question 4
+Write a Python function, file_read_return_last_two(fname) that prints out the last 2 lines ( setences) of the file.
+
+def file_read_return_last_two(fname):
+    with open(fname) as f:
+        content_list = f.readlines()
+    mylist = content_list[-2:]
+    for i in range(0,2):
+            mysent = mylist[i][:-1]
+            print(mysent)
+fname = 'my_file.txt'
+file_read_return_last_two(fname)            
+        
+Question 5
+Create a dictionary with keys 1 through 100 and values equal to the key**2
+Once you have created this dictionary save it as a text file. The odd lines should be the keys and the even rows should be their values. A function should be developed,save_dict(dicname, fname) that saves the dictionary in fname.
+Now create a second function,read_dict(fname), that reads this txt file and recreates the original dictionary
+#Create a dictionary as follows
+A = [a for a in range(10)]
+B = [b**2 for b in range(10)]
+C = list(zip(A,B))
+d = dict(C)
+print(d)
+# Then create a function that writes the dictionary to a file as a text file 
+# Then create a function that recreates the dictionary
+​
+def save_dict(dicname, fname):
+    f =  open(fname, 'w') 
+    for key in  dicname:
+        first = str(key)
+        sec = str(dicname[key])
+        f.write(first +'\n')
+        f.write(sec+'\n')
+    f.close()
+​
+fname = 'one.txt'    
+save_dict(d, fname) 
+​
+def read_dict(fname):
+    dicname = {}
+    f = open(fname, 'r')
+    mylist = f.readlines() # reads all lines in the file into a list each line is an element in the list. It adds\n
+    for i in range(0, len(mylist), 2):
+        key_float = float(mylist[i].strip('\n'))
+        val_float = float(mylist[i + 1].strip('\n'))  # returns a string
+        dicname[key_float] = val_float
+    f.close()
+    return dicname
+​
+​
+dict = read_dict('one.txt')
+​
+print(dict)
+Question 6
+Prepare for a Case Study: Making a Phone Directory
+
+1. We build a system where we ask the user to 
+    a. enter record
+    b. Do a query
+    c. Load a file
+    d Save a file
+    e Exit
+2. In our case enter a record means entering a name and a telephone number
+3. So our system is simple. We just want a mechanism of storing names and phone numbers 
+4. Any given a name we want to pull out a phone number   
+We build a system where we ask the user to a. enter a new record b. Do a query c. Load a file d Save a file e Exit
+In our case enter a record means entering a name and a telephone number
+So our system is simple. We just want a mechanism of storing names and phone numbers
+Any given a name we want to pull out a phone number
+
+4.1 There are many problems which have this format.
+
+4.2 A menu with a list of possible actions that can be taken
+
+4.3 A mechanism for retrieving data from a file and storing new data that you have
+
+4.4 We have different routines for the different actions.
+
+4.5 We have to be very careful on how we select data structures for the different activities
+
+In practice the input and output routines have to be carefully designed so as to be idiot proof.
+
+We do not want bad data to enter the system.
+
+For example we will add some minimal features to ensure the telephone number is entered in a format that we can use.
+
+We may also want to provide some form of assistance to the query function. For example as the person types a name the computer gives suggestions from the data base.
+
+Please take a crack at building this system.
+1. and come to class ready to help collectively to build such a system
+​
