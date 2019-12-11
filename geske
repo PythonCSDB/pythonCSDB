@@ -1,0 +1,255 @@
+Jupyter Notebook
+Geske_Case
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+Geske Compound Option Model
+Assume two tranches of debt,  (F1,T1)  and  (F2,T2) 
+At date  T1  the firm is obliged to make the payment of  F1 .
+The assumption is made that the firm cannot sell its assets to meet its obligation. Rather, the firm must go to capital markets and raise funds (equity or new debt) to finance the payments.
+Clearly, the ability to raise funds will depend on the amount of debt outstanding. If the present value of all debt outstanding, together with the required payment,  F1 , exceeds the value of the firm, then no funding will be obtained, and the shareholders will declare the firm bankrupt.
+Let  B2(T1)  be the date  T1  value of the debt due at time  T2 . Then the firm is solvent if:
+V(T1)>F1+B2(T1)
+ 
+If the firm is solvent, then refinancing is assumed to take place with equity. If the above condition is not met, then the firm is insolvent and bankruptcy occurs.
+Hence, there is a critical firm value,  V∗=V∗(T1)  above which the firm remains solvent.
+If the payment is made, then  B2(T1)  can be computed using the Merton model. The debt holders own the firm, but have written a call option on the assets of the firm. That is, if the firm is solvent:
+B2(T1)=V(T1)−C(V(T1),F2,T2−T1,rf,σV)
+ 
+where  C()  is the value of a call option with strike  F2 , time to expiry,  T2−T1 , risk free rate  rf , and underlying asset volatility,  σV .
+Define the point  V∗  to be the value of the firm at date  T1  which equates the value of the outstanding debt,  F1 , together with the fair value of the debt due at time  T2 .
+That is at the point  V∗  we have:
+V∗=F1+B2(T1)
+ 
+    =F1+(V∗−C(V∗,F2,T2−T1,rf,σV))
+ 
+Hence, the value  V∗  is the point at which: [ C(V^*, F_2, T_2-T_1, r_f, \sigma_V)= F_1 ]
+
+To find the critical value  V∗  we can use the Black Scholes equation and iteratively increase the underlying,  V(T1) , until the value of the call option equals the face value of the debt due at time  T1 .
+Viewed from time 0, equity holders have a compound option on the assets of the firm.
+It is a compound option, because if all goes well, then at time T1 they can exercise their claim, make the payment of F1 dollars and receive a call option on the assets of the firm.
+Hence, at date 0, they have an option on an option, or a compound option.
+The strike price of the compound option is F1. they will exercise their compound option at date T1 and receive a call option if the underlying firm value exceeds the threshold V∗, or equivalently, if the option they receive,C(V(T1),F2,T2−T1,r,σ) exceeds the cost, F1 that they pay.
+Geske shows that the initial value of the compound option is given by
+CO0=V0e−dT2M(a1,b1,ρ)−F2e−rfT2M(a2,b2,ρ)−e−rfT1F1N(a2)
+where
+a1a2b1b2ρ=====ln(V0/V∗)+(rf−d+σ2V/2)T1σVT1⎯⎯⎯⎯√a1−σT1⎯⎯⎯⎯√ln(V0/F2)+(rf−d+σ2V/2)T2σVT2⎯⎯⎯⎯√b1−σVT2⎯⎯⎯⎯√T1T2⎯⎯⎯⎯⎯√
+and M(x,y,ρ)=P(X<x,Y<y) where X and Y are bivariate standard normal random variables with correlation, ρ. If the value of the firm and the volatility of te assets of the firm were available then we could use this model directly. However, as with the Merton model, these numbers are not observable and so must be extracted from other sources. Typically, this is done by using information on the equity price and on the equity volatility. The equity volatility is linked to the asset volatility through the equation
+σE=∂E∂VVE≈M(a1,b1;ρ)σV
+import numpy as np
+import matplotlib.pyplot as plt
+from math import log, sqrt, exp
+from scipy import stats
+from scipy import optimize as sco
+%matplotlib inline
+from scipy.stats import mvn
+import numpy as np
+low = np.array([-100, -100])
+upp = np.array([0, 0])
+mu = np.array([0, 0.0])
+S = np.array([[1.0,0.0],[0,1.0]])
+p,i = mvn.mvnun(low,upp,mu,S)
+print(p)
+We need a bivariate Normal distribution function
+P(z1<a,z2<b  |   ρ)
+def bivariate_cdf(a,b, rho):
+    low = np.array([-10, -10])
+    upp = np.array([a,b])
+    mu = np.array([0, 0.0])
+    S = np.array([[1.0,rho],[rho,1.0]])
+    p,i = mvn.mvnun(low,upp,mu,S)
+    return p
+​
+a = 0.0
+b = 0.0
+rho = 1.0
+p = bivariate_cdf(a,b, rho)
+print(p)
+    
+def  PR_Black_Scholes_Call(s, X, T, r, div, sigma):
+    d1 = (log(s / X) + (r - div + 0.5 * sigma**2) * T) / (sigma * (T**0.5))
+    d2 = d1 - sigma * (T**0.5)
+    Nd1 = stats.norm.cdf(d1)
+    Nd2 = stats.norm.cdf(d2)
+    c= s * exp(-div * T) * Nd1 - X * exp(-r * T) * Nd2
+    return c
+​
+s = 100.0
+X = 100.0
+T = 5.0
+r = 0.02
+q = 0.0
+sigma = 0.25
+c= PR_Black_Scholes_Call(s, X, T, r, q, sigma)
+print(c)
+def PR_Implied_Stock(v, F2, T, r, d, sigma, F1):
+    #This function computes the breakeven value vstar
+    # set up the initial values
+    vhigh = v * 2
+    vlow = v / 20
+    #compute the BS price at these two points
+    for i in range(1,40):
+        Bhigh = PR_Black_Scholes_Call(vhigh, F2, T, r, d, sigma)
+        Blow = PR_Black_Scholes_Call(vlow, F2, T, r, d, sigma)
+        vmiddle = (vhigh + vlow) / 2
+        bmiddle = PR_Black_Scholes_Call(vmiddle, F2, T, r, d, sigma)
+        if (bmiddle > F1): 
+            vhigh = vmiddle
+        else:
+            vlow = vmiddle
+​
+    Implied_Stock = vmiddle
+    return Implied_Stock
+​
+v = 100.0;F1 = 35.0; T1 = 1.0;F2 = 50.0;T2 = 5.0; r = 0.10; d = 0.0; sigma = 0.298
+tau = T2 -T1
+IS = PR_Implied_Stock(v, F2, tau, r, d, sigma, F1)
+print(IS)
+def  PR_Compound(v, F2, T2, r, d, sigma, F1, T1):
+    # V = Value of Firm
+    # AT time T1 the firm pays F1
+    # At time T2 the firm pays F2
+    #First find vstar
+    tau = T2 - T1
+    rho = sqrt(T1 / T2)
+    vstar = PR_Implied_Stock(v, F2, tau, r, d, sigma, F1)
+    #Now compute the stuff for the formula
+    a1 = (log(v / vstar) + (r - d + sigma**2 / 2) * T1) / (sigma * sqrt(T1))
+    a2 = a1 - sigma * sqrt(T1)
+    b1 = (log(v / F2) + (r - d + sigma**2 / 2) * T2) / (sigma * sqrt(T2))
+    b2 = b1 - sigma * sqrt(T2)
+    term1 = v * exp(-d * T2) * bivariate_cdf(a1, b1, rho)
+    term2 = F2 * exp(-r * T2) * bivariate_cdf(a2, b2, rho)
+    term3 = exp(-r * T1) * F1 * stats.norm.cdf(a2)
+    Compound = term1 - term2 - term3
+    return Compound
+​
+​
+v = 100.0;F1 = 35.0; T1 = 1.0;F2 = 50.0;T2 = 5.0; r = 0.10; d = 0.0; sigma = 0.298
+equityp = PR_Compound(v, F2, T2, r, d, sigma, F1, T1)
+​
+​
+def equityvol(v, sigma, F2, T2, r, d, F1, T1, equityp):
+    #First find vstar
+    tau = T2 - T1
+    rho = sqrt(T1 / T2)
+    vstar = PR_Implied_Stock(v, F2, tau, r, d, sigma, F1)
+    #Now compute the stuff for the formula
+    a1 = (log(v / vstar) + (r - d + sigma**2 / 2) * T1) / (sigma * sqrt(T1))
+    b1 = (log(v / F2) + (r - d + sigma**2 / 2) * T2) / (sigma * sqrt(T2))
+    term1 = bivariate_cdf(a1, b1, rho) * exp(-d * T2)
+    vole = (v/ equityp) * sigma * term1
+    return vole
+​
+voleq =equityvol(v, sigma, F2, T2, r, d, F1, T1, equityp)
+print(voleq)
+v = 100.0;F1 = 35.0; T1 = 1.0;F2 = 50.0;T2 = 5.0; r = 0.10; d = 0.0; sigma = 0.298
+equityp = PR_Compound(v, F2, T2, r, d, sigma, F1, T1)
+print('Value of the assets         ',v)
+print('Volatility of the assets    ', sigma)
+print('F1 and T1                   ','F1=', F1, 'T1=', T1)
+print('F2 and T2                   ','F2=', F2, 'T2=', T2)
+print('')
+​
+print('equity is priced at      ', round(equityp,3))
+print('equity volatility is     ', round(voleq,4))
+​
+We now want to invert the process.
+That is we will take the equity price as given and the volatility of the equity as given
+and use the Geske equation for equity and the link between asset and equity vols to infer the asset price and the asset vol.
+#INputs
+equityA = equityp
+voleqA =  voleq
+#F1 = 35.0; T1 = 1.0;F2 = 20.0;T2 = 5.0; r = 0.10; d = 0.0; 
+​
+#Initial guesses 
+sigmaV = 0.50
+V      = 120.0
+​
+#True answers are 100 and 0.298
+​
+def myobjective(x):
+    V = x[0]
+    sigmaV = x[1]
+    global F1, T1, F2, T2, r, d, equityA,voleqA
+    equityT = PR_Compound(V, F2, T2, r, d, sigmaV, F1, T1)
+    voleqT = equityvol(V, sigmaV, F2, T2, r, d, F1, T1, equityT)
+    err = (equityT - equityA)**2 + 100.0*( voleqT-voleqA )**2
+    return err
+​
+x = (V, sigmaV)
+err = myobjective(x)
+ 
+print(err)
+result = sco.minimize(myobjective, x)
+​
+ans = result.x
+valf = result.fun
+print(' The implied asset value is :   ', round(ans[0],3))
+print(' The volatility of the asset is ', round(ans[1],4))
+​
+print(' The objective function is      ', round(valf,7))
+Case Study
+https://finance.yahoo.com/quote/RIG/
+
+#short term debt = current liabilities = 1,458,000,000
+# numbers in millions
+Short = 1458
+# long term debt = 9126
+Long = 9126
+Nshares = 611.86
+r    = 0.0158
+d     = 0
+voleqA  = 0.696
+equityA   = 4.82
+F1 = Short/Nshares
+F2 = (Long/Nshares)
+print(F1, F2)
+T1 = 1
+T2 = 6
+​
+Vg = 14; sigmaVg = 0.10
+x = (Vg, sigmaVg)
+result = sco.minimize(myobjective, x)
+​
+ans = result.x
+valf = result.fun
+Vfirm = ans[0]
+Volf  = ans[1]
+print(' The implied asset value is :   ',Vfirm)
+print(' The volatility of the asset is ',Volf)
+​
+print(' The objective function is ', round(valf,7))
+def  PR_probs(Vfirm, F2, T2, r, d, Volf, F1, T1):
+    tau = T2 - T1
+    rho = np.sqrt(T1 / T2)
+    vstar = PR_Implied_Stock(v, F2, tau, r, d, sigma, F1)
+#   Now compute the stuff for the formula
+    a1 = (np.log(v / vstar) + (r - d + sigma**2 / 2) * T1) / (sigma * np.sqrt(T1))
+    a2 = a1 - sigma * np.sqrt(T1)
+    b1 = (np.log(v / F2) + (r - d + sigma**2 / 2) * T2) / (sigma * np.sqrt(T2))
+    b2 = b1 - sigma *np.sqrt(T2)
+​
+    total = 1 - bivariate_cdf(a2,b2, rho)
+    short = 1- stats.norm.cdf(a2)
+    long  = 1 - (1 - total) / (1 - short)
+​
+    return total, short, long
+​
+​
+total, short, long = PR_probs(valf, F2, T2, r, d, ans[1], F1, T1)
+#print(total, short, long)
+print('The short term probability of default is (%)    ', round(short*100,5))
+print('The total probability of default is (%)         ',round(total*100,3))
+print('The conditional long term probability of default', round(long*100,3))
+​
+​
