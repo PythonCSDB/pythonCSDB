@@ -1,0 +1,291 @@
+Jupyter Notebook
+Homework+Numpy-Solutions
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+Homework Numpy
+import numpy as np
+Question 1
+We are going to explore various ways to create an array object of various data types.
+
+Use np.arange to create a vector from 2 to 20 inclusive.
+vector = np.arange(2, 21)
+print vector
+type(vector)
+Every numpy.ndarray has a data dtype object. This data type indicates whether the elements in an array is string, integer,float, boolean or user defined data type. You can use the attribute dtype to querry the data types created. ( Example: np.array(range(start, end), dtype = float)
+
+Redo the above question but this time make sure your data is a float. You need to use the np.array() command here. If the vector you create is vec, then to querry the data type use vec.dtype
+vectorF = np.array(range(2,21), dtype = float)
+print vectorF
+print type(vectorF)
+print vectorF.dtype
+#3. Can numpy arrays be strings
+mystr = ['A', 'B', 'C']
+mynewst = np.array(mystr)
+print mynewst
+type(mynewst)
+mynewst.dtype
+Using the np.linspace command create a vector: start = 3, end = 5. the length out should be 20
+Change the shape of the vector to 2 X 10.
+print out the shape of the array above.
+mydata = np.linspace(3,5,20)
+print mydata
+myarray = mydata.reshape((2,10))
+print myarray
+myarray.shape
+Generating Random Numbers from a Distribution
+Numpy has a lot of built in functions for creating numpy arrays.
+You have already seen some of them like: np.linspace and np.arange.
+Let explore a lot more.
+Numpy has a submodule called random.
+It can be accessed by importing like so: from numpy import random.
+With this module you can sample from nearly all the theoritical distributions out there.
+Let take it for a spin:
+Question 2
+Create a 5X5 matrix of standard normal. [Hint: A couple of options. random.normal, random.standard_normal]. Make sure you specify the shape of the matrix. Use a seed of 1258
+
+Scale the element in the matrix by a factor of 10. Then take the floor of the results.
+
+Set every negative element in the matrix to zero. [Hint: using boolean indexing like so: A[A < 0]]
+
+Using np.nonzero find the locations of the nonzero elements.
+
+Use the indices to fetch the nonzero elements from the matrix. You get a 1-D array of nonzero elements of the matrix
+
+Now create matrix of ones of size 5 X 5. Fill in the Matrix of ones by the nonzero elements of question 5 [Hint: np.ones]
+
+Repeat question 6 but use a matrix of zeros inplace of ones.
+
+#Create a 5X5 matrix of standard normal. 
+#[Hint: A couple of options. random.normal, random.standard_normal].
+#Make sure you specify the shape of the matrix
+from numpy import random
+random.seed(1258)
+​
+my_normal = random.standard_normal((5,5))
+print('Standard normal = ',my_normal)
+#2. Scale the element in the matrix by a factor of 10. 
+#Then take the floor of the results.( ie truncate to integer values)
+​
+myscaled_normal = np.floor(10*my_normal)
+print('scaled stardard normal = ', myscaled_normal)
+​
+#3. Set every negative element ( of rand_normal)  in the matrix to zero.
+# Hint: using boolean indexing like so: A[A < 0]
+​
+myscaled_normal[myscaled_normal<0]=0
+print myscaled_normal
+#4.  Using `np.nonzero` find the locations of the nonzero elements. 
+A = np.nonzero(myscaled_normal)
+print A
+#A will contain the row coordinates, followed by the column coordinates
+print 'rows', A[0]
+print 'columns', A[1]
+​
+#6.  Now create matrix of ones of size 5 X 5. 
+# Fill in the Matrix of ones by the nonzero elements of question 5 above
+ones = np.ones((5,5))
+ones[A[0],A[1]] = myscaled_normal[A[0],A[1]]
+print myscaled_normal
+print ''
+​
+print'ones filled with nonzero element from myscaled_normal = ' '\n', ones
+#7. Repeat _question 6_ but use a matrix of **zeros** in place of ones 
+zeros = np.zeros((5,5))
+zeros[A[0],A[1]] = myscaled_normal[A[0],A[1]]
+print myscaled_normal
+print ''
+print('Zeros filled with nonzero element from myscaled_normal = ','\n', zeros)
+Slicing Operations
+Question 3
+In this excercise, we are going to do a lot of slicing operations.
+
+start of by creating a 6 X 6 matrix of np.nan. The np.nan data dtype means Not a Number. It is typically used to mean a missing value in data.[Hint: use np.full and then specify the data type. This should help you accomplish this task].
+
+The matrix above can be partitioned into blocks of matrices: top-left, top-right, bottom-left, and bottom-right. All of which are 3 X 3. Now:
+
+Replace top-left with 1 2 Replace top-right with 2
+Replace bottom-left with 3
+Replace bottom-right with 4
+Now create a matrix of alphabets like so `python from string import ascii_lowercase, ascii_uppercase ll = list(ascii_lowercase[:9]) lu = ll = list(ascii_uppercase[:9]) ll_matrix = np.array(ll,dtype ='|S10').reshape((3,3)) lu_matrix = np.array(lu, dtype ='|S10').reshape((3,3))
+
+`
+
+using np.concatenate, take the two matrices ll_matrix and lu_matrix and stack them
+
+Vertically
+Horizontally
+Accomplish the question 2.A using np.vstack and np.hstack
+
+Create a 6 by 6 matrix of zeros on the inside and ones on the outside.
+
+Create an 8 by 8 matrix with zeros followed by ones in checkerboard fashion. For a 4 X 4 matrix, it looks like so:
+
+0 1 0 1
+
+1 0 1 0
+
+0 1 0 1
+
+1 0 1 0
+
+NOTE: your matrix in part one should look like so:
+
+np.nan np.nan np.nan np.nan np.nan np.nan
+
+np.nan np.nan np.nan np.nan np.nan np.nan
+
+np.nan np.nan np.nan np.nan np.nan np.nan
+
+np.nan np.nan np.nan np.nan np.nan np.nan
+
+np.nan np.nan np.nan np.nan np.nan np.nan
+
+np.nan np.nan np.nan np.nan np.nan np.nan
+
+#3.1. start of by creating a 6 X 6 matrix of `np.nan`. 
+​
+# The `np.nan` data dtype means __Not a Number__. 
+# It is typically   used to mean a missing value in data.
+# [Hint: use np.full and then specify the data type. This should help you accomplish this task]. 
+​
+​
+matr = np.full((6,6), fill_value= np.nan)
+print(matr)
+​
+#2.A top-left : replace with 1
+matr[:3,:3] = 1
+print(matr)
+print " "
+#2.B top-right
+matr[:3,3:] = 2
+print(matr)
+print " "
+#2.C bottom-left
+matr[3:, :3] = 3
+print(matr)
+print " "
+#2.D bottom-right
+matr[3:,3:] = 4
+print(matr)
+#3
+from string import ascii_lowercase, ascii_uppercase
+ll = list(ascii_lowercase[:9])
+lu = list(ascii_uppercase[:9])
+ll_matrix = np.array(ll).reshape((3,3))
+lu_matrix =  np.array(lu).reshape((3,3))
+print ll_matrix
+print lu_matrix
+​
+#3.A Take the two matrices ll_matrix and lu_matrix and stack them 
+#       - Vertically
+#       - Horizontally
+#       
+#       using `np.concatenate`
+​
+​
+#vertical stacking
+v_stack = np.concatenate((ll_matrix,lu_matrix))
+print(v_stack)
+​
+#Horizontal stacking. 
+h_stack = np.concatenate((ll_matrix, lu_matrix), axis = 1)
+print(h_stack)
+#3.BA Take the two matrices ll_matrix and lu_matrix and stack them 
+#       - Vertically
+#       - Horizontally
+#       
+#       using `np.vstack` and 'np.hstack'
+#Vertical stacking
+v_stack =np.vstack((ll_matrix,lu_matrix))
+print(v_stack)
+print " "
+# horizontal stacking
+h_stack = np.hstack((ll_matrix,lu_matrix))
+print(h_stack)
+# 4 Create a 2d array of size (6 by 6 ) with ones on the border and zeros inside
+​
+mymatrix = np.zeros((6,6))
+mymatrix[0,:] = 1
+mymatrix[5,:]= 1
+mymatrix[:,0]= 1
+mymatrix[:,5]= 1
+print mymatrix
+#5 Create an 8 by 8 matrix with  zeros followed by ones in checkerboard fashion.
+row1 = [ 1, 0, 1,0,1,0, 1,0]
+row2 = [0,1,0,1,0,1, 0,1]
+mymatrix = np.zeros((8,8))
+for i in range(0,8):
+    if i%2 == 0:
+        mymatrix[i,:] = row1
+    else:
+        mymatrix[i,:] = row2
+​
+​
+print mymatrix
+​
+Universal Functions
+The Slowness of Loops
+Python's default implementation does some operations very slowly.
+This is in part due to the dynamic, interpreted nature of the language: the fact that types are flexible, so that sequences of operations cannot be compiled down to efficient machine code as in languages like C and Fortran.
+The relative sluggishness of Python generally manifests itself in situations where many small operations are being repeated – for instance looping over arrays to operate on each element.
+For example, imagine we have an array of values and we'd like to compute the reciprocal of each.
+A straightforward approach might look like this:
+import numpy as np
+np.random.seed(0)
+​
+def compute_reciprocals(values):
+    output = np.empty(len(values))
+    for i in range(len(values)):
+        output[i] = 1.0 / values[i]
+    return output
+        
+values = np.random.randint(1, 10, size=5)
+compute_reciprocals(values)
+Lets compute the time it takes to do one loop when we compute 1million iterations
+We can do this using the magic command %timeit. This is how it works
+big_array = np.random.randint(1, 100, size=1000000)
+%timeit compute_reciprocals(big_array)
+Now we can speed this up dramatically using Universal Functions
+
+values = np.random.randint(1, 10, size=5) # as before
+print 1.0/values
+%timeit 1/big_array
+Question 4
+Normalizing a matrix
+Consider
+
+ np.random.seed(1235)
+ X = np.floor(np.random.random( size= 25)*100)
+Change the shape to 5X5 matrix and save it in a variable called Y.
+find the range of Y and store it in variable called drange. [Hint, range = maximum - minimum]
+Deflate Y by the its minimum and store it to a variable called Y_deflated
+divide Y_deflated by the drange and store to Y_scaled
+2.
+
+Create two 1-D normal random variables X and Y of size 1000
+compute their correlation and store to corr [Hint: np.corrcoef. This gives a matrix of correlation coefficient]. The correlation coefficient should be on the off diagonal
+Now, let compute this manually.
+
+Compute the mean of X and Y and store in xmean and ymean respectively.
+Demean X and Y and store the results in devx and devy.
+Do element-wise multiplication of devx and devy and sum the results of the multiplication. Further divide the results of the sum by total element in X. Store the results to cov
+Divide results 3.c by stdxy
+
+stdxy = np.std(X)*np.std(Y)
+Note: the result must be the same as the one in question 3.B
+
+**********************
+
+
+
+
