@@ -1,0 +1,225 @@
+Jupyter Notebook
+Merton_Short
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+The Merton Model
+1. We price equity and risky loans
+
+2. We take as input the equity price and the volatility of the equity.
+
+3. We also assume a firm has a payout of q, and their capital structur consists of a zero coupon bond of face value F with maturity T
+
+4. We then can compute the value of the firm and the volatility of the assets if the firm as well as risk neutral default probabilities
+import numpy as np
+import matplotlib.pyplot as plt
+from math import log, sqrt, exp
+from scipy import stats
+from scipy import optimize as sco
+%matplotlib inline
+We want to build a model that computes the Black Scholes formula for a call option and a put option. The formula requires knowledge of:
+
+The Value of the Firm is V
+The Face Value of Debt is F
+The Time to Maturity (in years), T
+The risk free rate, rf
+The payout of the firm is q
+The volatility of the assets of the firm is , σV.
+The price of the equity is given by
+EQ0=G0N(d1)−FerTN(d2)
+where
+
+d1=ln(G0/F)+(rf+0.5σ2V)TσVT⎯⎯⎯√
+d2=d1−σVT⎯⎯⎯√
+and G0=V0e−qT.
+
+def BS_call(S, X, T, rf, q, sigma):
+    # Black-Scholes-Merton Call Calculation
+    # Input Variable:
+    # s--Stock Price; x--Exercise Price; rf--Risk Free Rate;
+    # t--Time to Maturity; sigma--Volatility;  q--Continuous Dividend Yield
+​
+    G=float(S*exp(-q*T))
+    d1 = (log(G / X)+(rf + 0.5 * sigma ** 2) * T) / (sigma * sqrt(T))
+    d2 = d1 - sigma * (sqrt(T))
+    Nd1 = stats.norm.cdf (d1,0.0,1.0)
+    Nd2 = stats.norm.cdf (d2,0.0,1.0)
+    c0 = G*Nd1 - X*exp(-rf*T)*Nd2
+    return  c0
+​
+V = 100.0;F= 80.0; T = 5.0; rf= 0.03; q = 0.00; sigmaV = 0.30           
+​
+eq = BS_call(V, F, T, rf, q, sigmaV)           
+​
+print('Equity Price = ', round(eq,3))
+The Merton Bond Price and Credit Spread
+We now compute
+
+the risky bond price,
+the yield to maturity,
+the credit spread,
+the equity price
+of a firm given that we know the value of the assets of the firm and the volatility of the assets of the firm
+
+def Merton(V, F, T, rf, q, sigma):
+    equity = BS_call(V, F, T, rf, q, sigma)
+    G      = V*exp(-q*T)
+    B0     = G - equity
+    y      = -log(B0/F)/T
+    cs     = (y-rf)
+    
+    return B0, y, cs, equity
+​
+V = 100.0;F = 80.0;T = 5.0;sigmaV = 0.30;rf = 0.05;q = 0.0
+​
+​
+B0, y, cs, eq = Merton(V, F, T, rf, q, sigmaV)
+​
+print('Bond price:     ', round(B0,3))
+print('yield maturity  ', round(y, 4))
+print('credit spread   ', round(cs, 4))
+print('Equity Price    ', round(eq,3))
+    
+def sens_sigma(V, F, T, rf, q ):
+    #plot out sensitivity of creditspreads to increasing sigmaV
+    sigmaV   = np.linspace(0.02, 0.82, 100)
+    creditsp = np.zeros(100)
+    for i,sig in enumerate(sigmaV):
+        B0, y, creditsp[i], eq = Merton(V, F, T, rf, q, sig)
+        
+    plt.plot(sigmaV, creditsp*100)
+    plt.xlabel('Asset Volatility')
+    plt.ylabel('Credit Spread ( Percent)')
+    plt.title('Credit Spread for a Risky Loan')
+    
+​
+sens_sigma(V, F, T, rf, q )
+The Volatility of Equity
+The volatility of the equity under the Merton model is linked to the volatility of the assets of the firm.
+Specifically, it can be shown that
+σE=σVG0E0N(d1)
+Assume we are given the equity price and the volatility of the equity
+We have two equations in two unknowns (V0,σV)
+EQ0=G0N(d1)−FerTN(d2)
+σE=σVG0E0N(d1)
+We can use numerical procedures to solve these two equations.
+def sigEquity(V, F, T, rf, q, sigmaV):
+    # compute the volatility of equity given V and sigmaV
+    G   = float(V*exp(-q*T))
+    eqT = BS_call(V, F, T, rf, q, sigmaV)
+    d1  = (log(G / F)+(rf + 0.5 * sigmaV ** 2) * T) / (sigmaV * sqrt(T))
+    Nd1 = stats.norm.cdf (d1,0.0,1.0)
+    vol_eqT = sigmaV*G*Nd1/eqT
+    return vol_eqT
+    
+volE = sigEquity(V, F, T, rf, q, sigmaV) 
+print('The equity volatility is', volE)
+How does the volatility of equity behave as the firm becomes more levered?
+def sens_eqvol(V, T, rf, q, sigmaV):
+    # sensitivity of equity volatility to F ( ie leverage)
+    F = np.linspace(0.01, 100.0, 100)
+    eqvol = np.zeros(100)
+    for i,f in enumerate(F):
+        eqvol[i] = sigEquity(V, f, T, rf, q, sigmaV) 
+        
+    plt.plot(F, eqvol)
+    plt.xlabel('Face Value of Debt')
+    plt.ylabel('Volatility of Equity')
+    plt.title('Sensitivity of Equity Volatility to Increased Borrowing, F')
+        
+sens_eqvol(V, T, rf, q, sigmaV)    
+def  sens_eqvol_lev(V, T, rf, q, sigmaV):
+    # sensitivity of equity volatility to F ( ie leverage)
+    F = np.linspace(0.01, 100.0, 100)
+    eqvol = np.zeros(100)
+    lev = np.zeros(100)
+​
+    for i,f in enumerate(F):
+        eqvol[i] = sigEquity(V, f, T, rf, q, sigmaV) 
+        equity  = BS_call(V, f, T, rf, q, sigmaV)
+        lev[i] = V/equity
+        
+    plt.plot(lev, eqvol)
+    plt.xlabel('Leverage')
+    plt.ylabel('Volatility of Equity')
+    plt.title('Sensitivity of Equity Volatility to Leverage')
+sens_eqvol_lev(V, T, rf, q, sigmaV)    
+V = 100.0; F= 80.0; T = 5.0; rf= 0.05; q = 0.00; sigmaV = 0.30       
+B0, y, cs, eq = Merton(V, F, T, rf, q, sigmaV)
+volE = sigEquity(V, F, T, rf, q, sigmaV) 
+​
+​
+print('Bond price:             ', round(B0,3))
+print('yield maturity          ', round(y, 4))
+print('credit spread           ', round(cs, 4))
+print('Equity Price            ', round(eq,3))
+print('The equity volatility is', round(volE,5))    
+Experiment
+Lets assume the equity and equity volatility are given
+Can we reverse engineer and recover the asset value and asset volatility
+If we choose the following two values
+Eq=44.959
+σE=0.56785
+then we know that the answer is V=100, σV=0.30
+Lets try
+assume my initial guess is
+V=120.0
+σV=0.266
+If my guess is the correct value I should get zero for the objective function defined in the next cell.
+EqA = 44.959
+sigEA = 0.56785
+def myobjective(x):
+    # This is the objective function you want to minimize. 
+    # Take in a guess....Compute the equity value and equity volatility and minimize SSE
+    V      = x[0]
+    sigmaV = x[1]
+    
+    global F, T, rf, q, EqA, sigEA
+    
+    eqT   = BS_call(V, F, T, rf, q, sigmaV)
+    sigET = sigEquity(V, F, T, rf, q, sigmaV)
+    SSE   = (eqT-EqA)**2 + 100*(sigET- sigEA)**2
+    return SSE
+​
+​
+Vguess      = 120.0
+sigmaVguess = 0.56
+x = (Vguess, sigmaVguess)
+​
+err = myobjective(x)
+​
+print(round(err, 5))
+    
+Obtaining the Implied Asset Value and Asset Volatility
+def Get_V_sigV( ):
+    # This routine uses myvalues and an optimizer to imply out V and sigmaV
+    global F, T, rf, q, EqA, sigEA
+    Vguess = 2*EqA
+    sigV   = 2*sigEA
+    x      = (Vguess, sigV)
+    
+    
+    result = sco.minimize(myobjective, x)
+    ans    = result.x
+    
+    V      = ans[0]
+    sigmaV = ans[1]
+    return V, sigmaV
+    
+V, sigmaV = Get_V_sigV()
+print('The asset value is:     ', round(V,3))
+print('The asset Volatility is:', round(sigmaV,3))
+Summary:
+We take as input the equity price and the volatility of the equity.
+We also assume a firm has a payout of q, and their capital structure consists of a zero coupon bond of face value F with maturity T
+We then can compute the value of the firm and the volatility of the assets if the firm
+​
