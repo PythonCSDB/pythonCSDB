@@ -1,0 +1,212 @@
+Jupyter Notebook
+Structured_Notes-2
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+Structured Notes
+import numpy as np
+A structured note has interest or maturity payments that are not fixed in dollars, but perhaps are contingent on some other price or event
+
+Often the payouts are linked to stock prices, interest rates, commodities
+
+But they could be linked to earthquakes, weather
+
+They may have some optionality built into them
+
+Zero Coupon Bonds and Coupon Bonds
+P(0,T) is the price today for $1 to be received at date T
+
+B0=∑i=1NciP(0,ti)
+Equity Linked Bonds
+Consider a bond that pays out one share of ABC stock at date T.
+This “bond” has an uncertain payout at date T
+Questions
+What does it mean for this bond to sell at par?
+If there are coupon payment, should the coupons be paid in cash or in shares of ABC?
+For regulatory and tax purposes, is this instrument a stock or a bond?
+What is the fair price of this bond?
+Prepaid Forward Contracts
+You pay today to receive the underlying at date T
+
+The prepaid forward price is FP.
+
+FP=FT(0)e−rT
+So the fair price of an equity linked bond that pays 1 share of a non dividend paying stock at time T is
+FP=FT(0)e−rT=S0erTe−rT=S0
+Zero Coupon Equity Linked Bonds
+For a stock that pays dividend, d1 at t1, the fair value is:
+FP=FT(0)e−rT=(S(0)erT−d1er(T−t1))e−rT
+FP=S0−PV(dividend)
+# Example of a two year equity linked zero coupon bond
+​
+​
+​
+# Let B be the price of this bond. The stock pats 5 dollars  in 6 months and nothing thereafter.
+​
+S = 100; r = 0.06; T = 2; d1 = 5; t1 = 0.5 
+​
+B = S - d1*np.exp(-r*t1)
+print('The value of this structured note is', round(B,2))
+Cash Coupon Linked Bond
+#Find the value of a bond that pays coupons every six months for two years and then pays one unit of the stock
+
+B0=cA(0,4)+FP
+Here A(0, 4) is the sum of four discount factors.
+
+# The coupon per period is $\$2$; # The stock pays a dividend in each period of $\$1$
+# stock is trading at 100. The yield curve ( in 6 month periods) is given below  in continuous compounded form
+​
+s = 100; c = 2; d = 1
+​
+yields = np.zeros(5)
+yields[0] = 0
+yields[1] = 0.05
+yields[2] = 0.055
+yields[3] = 0.06
+yields[4] = 0.064
+​
+​
+# Find the value of the annuity:
+annuity = 0
+for i in range(1, 5):
+    annuity = c*np.exp(-yields[i]*i/2) + annuity
+    
+# Find the prepaid forward price.
+​
+​
+PVd = 0
+for i in range(1, 5):
+    PVd = d*np.exp(-yields[i]*i/2) + PVd
+Fp = s - PVd
+​
+B = annuity + Fp
+​
+print('The value of the structured note is', round(B, 2))
+​
+​
+​
+​
+If we wanted to price an equity linked note at par, what coupon would we give?
+
+Assume there are n coupon payments with the last one being at time T.
+
+B=cA(0,n)=cA(0,n)−Fp
+We want B=S0
+c=(S0−Fp)A(0,n)
+##Example
+s = 100; d = 1 #each year
+​
+yields = np.zeros(5)
+yields[0] = 0
+yields[1] = 0.05
+yields[2] = 0.055
+yields[3] = 0.06
+yields[4] = 0.064
+​
+d = np.zeros(5)
+d[2] = 1; d[4]= 1
+# Find the value of the annuity with coupon one.
+annuity = 0
+for i in range(1, 5):
+    annuity = np.exp(-yields[i]*i/2) + annuity
+    
+# Find the prepaid forward price.
+​
+​
+PVd = 0
+for i in range(1, 5):
+    PVd = d[i]*np.exp(-yields[i]*i/2) + PVd
+Fp = s - PVd
+​
+c = (s-Fp)/annuity
+​
+print('The value of the coupon that makes the bond price par is', round(c, 3))
+​
+​
+​
+Interest is Paid in fractions of stock
+Let the number of fractional shares received be c
+At maturity get 1 share
+Assume there are n periods.
+What is the value of this bond
+The value of c shares obtained at the jth coupon date, Tj is cFPTj(0)
+So:
+V0=∑j=1ncFPTj(0)+FPTn(0)
+#The price of a stock is 100. 
+#The contract gives you 0.5 shares every 6 months for one year and then one additional stock in year 1. 
+#The stock pays no dividend and interest rates are 5% continuously compounded. 
+#What is the value of this equity linked bond?
+​
+c = 0.5; dt = 0.5; n = 2; r = 0.05; s = 100
+​
+c = np.zeros(3); Fp = np.zeros(3)
+c[1] = 0.5; c[2] = 1.5
+Fp[1] = 100; Fp[2] = 100; 
+V = c[1]*Fp[1] + c[2]*Fp[2]
+print( 'The value of the equity linked bond is', round(V, 2))
+​
+#The price of a stock is 100. 
+#The contract gives you 0.5 shares every 6 months for one year and then one additional stock in year 1. 
+#The stock pays a two dollar  dividend every six months and interest rates are 5% continuously compounded. 
+#What is the value of this equity linked bond?
+​
+c = 0.5; dt = 0.5; n = 2; r = 0.05; s = 100
+​
+c = np.zeros(3); Fp = np.zeros(3); d = np.zeros(3)
+c[1] = 0.5; c[2] = 1.5
+d[1] = 2; d[2]= 2
+Fp[1] = s - d[1]*np.exp(-r*0.5); Fp[2] = s - d[1]*np.exp(-r*0.5) - d[2]*np.exp(-r*1); 
+V = c[1]*Fp[1] + c[2]*Fp[2]
+print( 'The value of the equity linked bond is', round(V, 2))
+​
+What fractional shares must be paid for the note to be priced at par
+
+We have:
+c∗=(S0−FPTN)∑Ni=1FPTj
+A stock pays a dividend yield of 2% continuously. The riskless rate is 10% continuously compounded. A The number of fractional shares is c every six months , for one year. Then 1 share is paid out. What should c be for the bond to be priced at par?
+
+Let F1 be the forward price for six months and F2 be the forward price for one year
+We have q= 0.02; t1=0.5; t2=1.0; r = 0.10
+F1=S0e(r−q)t1 and F2=S0e(r−q)t2. From this we have
+
+Fp1=F1e−rt1=S0e−qt1 and Fp2=F1e−rt2=S0e−qt2
+We require S0=(Fp1+Fp2)c+Fp2. Therefore:
+
+S0=(S0e−qt1+S0e−q∗t2)∗c+S0e−qt2
+From which we have
+
+c=1−e−q∗t2e−qt1+e−qt2
+ q = 0.02; t1 = 0.5; t2 = 1
+    
+c = (1 - np.exp(-q*t2))/(np.exp(-q*t1) + np.exp(-q*t2))
+print( 'The fractional share is', round(c, 5))
+Zero Coupon Commodity Linked Bonds
+A note pays one unit of commodity at T
+
+What is the price of this note?
+
+It is theprepaid forward price of the commodity
+FP=S0e(r−q)Te−rT=S0e−qT
+The spot price for gold is S(0) = 400.
+The 3 year forward price is F=455.
+The riskless rate is 6.25% continuously compounded.
+What is the price of zero coupon note paying one ounce of gold in 3 years.
+Solution
+The forward price is given as 455.
+we just discount this at the riskless rate to get $377.2, which is less than the spot price.
+Currency Linked Bonds
+foreign curreny is paid out instead of domestic currency.
+s0 is the spot exchange rate.
+BF is the foreign bond price.
+Clearly:
+BD=s0BF
+​
