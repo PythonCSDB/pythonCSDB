@@ -1,5 +1,5 @@
 Jupyter Notebook
-Homework_Portfolio-Problems
+Homework_Portfolio-1
 (unsaved changes)
 Current Kernel Logo
 Python 3 
@@ -13,8 +13,6 @@ Widgets
 Help
 
 Homework
-MAKE A COPY OF THIS BEFORE STARTING!!!!!!!!!!!!!!
-
 Question 1
 From quandl read in the adjusted closing prices for the following stocks from January 1st 2012 to January 17th 2017
 The stocks are General Electric GE; Nike NKE; Ford F; General Motors GM; Citigoup C; Rite Aid RAD.
@@ -28,26 +26,47 @@ start = pd.to_datetime('2012-01-01')
 end = pd.to_datetime('2017-01-01')
 mynames = ['GE', 'NKE','F','GM','C','R']
 ​
-​
+ge = quandl.get('WIKI/GE.11',start_date=start,end_date=end)
+nke = quandl.get('WIKI/NKE.11',start_date=start,end_date=end)
+f = quandl.get('WIKI/F.11',start_date=start,end_date=end)
+gm = quandl.get('WIKI/GM.11',start_date=start,end_date=end)
+c = quandl.get('WIKI/C.11',start_date=start,end_date=end)
+rad = quandl.get('WIKI/RAD.11',start_date=start,end_date=end)
+List_df = [ge, nke, f, gm, c, rad]
 Question 2
 Create one dataframe with all the prices. Do this in a way that you could extend your analysis to handle N stocks where N could be large.
+All = ge
+All.head()
 ​
-​
-​
-​
+for  i, iname in enumerate(List_df): 
+    All[mynames[i]]= iname['Adj. Close']
+All.head()
+All = All.drop(['Adj. Close'], axis = 1)
+All.head()
 Question 3
 Create N colums in the dataframe for the cumulative return, starting at 1.
 Create N other columns for the logarithmic returns for the Nindividual stocks.
 So for the case N = 6 you should end up with 12 new columns with nice labels for their names.
+mycret= ['GE_cret', 'MKE_cret', 'F_cret', 'GM_cret', 'C_cret', 'R_cret']
+myret= ['GE_ret', 'MKE_ret', 'F_ret', 'GM_ret', 'C_ret', 'R_ret']
+mynames = ['GE', 'NKE','F','GM','C','R']
+for i,col in enumerate(mycret):
+    All[col] = All[mynames[i]]/All.iloc[0][mynames[i]]
 ​
+for i,col in enumerate(myret):
+    All[col] = np.log(All[mynames[i]]/All[mynames[i]].shift(1))
+​
+All.head()
 Question 4
-Now Create a new Dataframes from this big Dataframe. The first called Prices contain the prices
+Now Create # new Dataframes from this big Dataframe. The first called Prices contain the prices
 The second called CReturns gives the accumulated returns
 The third gives the log returns.
-​
-.......
+Prices = All[mynames]
+Prices.head()
+CReturns = All[mycret]
 CReturns.head()
-.......
+Returns = All[myret]
+Returns = Returns.iloc[1:]
 Returns.head()
 Question 5
 Plot out the histograms of returns
@@ -60,14 +79,26 @@ use the returns DataFrame to do the following
 First split the dataset into two. Call them insample and outsample.
 Using the insample data construct the variance covariance matrix
 Using the Variance-Covariance matrix, print out the standard deviations of annualized returns.
-​
-​
+n = len(Returns)
+n
+outsample  = Returns.iloc[len(Returns)/2:]
+insample = Returns.iloc[0:len(Returns)/2]
+Pricesout = Prices.iloc[len(Returns)/2:]
+ACout = pd.DataFrame()
+for i,col in enumerate(mycret):
+    ACout[col] = Pricesout[mynames[i]]/Pricesout.iloc[0][mynames[i]]
 insample.tail()
 outsample.head()
 ACout.head()
-​
-​
-​
+mus = insample.mean(axis=0)*252
+mus
+V = insample.cov()*252
+V
+sig = np.zeros(6)
+for i, nam in enumerate(myret):
+    sig[i] = V.iloc[i][nam]
+    
+print np.sqrt(sig)  
 Question 7
 Use the mean vector and the Variance Vector of the historical data set to establish the best portfolio with an expected return of 20%
 def mean_portfolio(weights):
@@ -95,14 +126,16 @@ import scipy.optimize as sco
 # Setup the constraints
 #The first constraint is that the sum of the weights add up to one.
 #The second constraint states that the expected return is a given constant equal to tret
-​
-​
-# Stuff Here
+tret = 0.20
+cons = ({'type': 'eq', 'fun': lambda x:  mean_portfolio(x) - tret},
+        {'type': 'eq', 'fun': lambda x:  np.sum(x) - 1})
 ​
 bnds = tuple((0, 1) for x in weights)
 wt = 6
 wt = wt*[1.0/wt]
-​
+wt
+result  = sco.minimize(sig_portfolio,wt , method='SLSQP',
+                       bounds=bnds, constraints=cons)
 print ' The optimal portfolio is ', result.x
 print 'The std. deviation of this portfolio is', result.fun
 xstar = result.x
