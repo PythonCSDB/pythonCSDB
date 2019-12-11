@@ -623,6 +623,171 @@ for x in range(6):
 
 
 
+*************************************************************************************
+
+
+
+Jupyter Notebook
+Dictionaries_Harder_Problems_Solutions
+(unsaved changes)
+Current Kernel Logo
+Python 3 
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+
+This homework set requires the use of dictionaries and functions
+Dictionaries
+Dictionaries are key-value containers. They are unordered and unsortable. They can be called by keys.
+
+A dictionary in Python is a collection of key-value pairs.
+Each key is connected to a value, and you can use a key to access the value associated with that key.
+A key’s value can be a number, a string, a list, or even another dictionary. In fact, you can use any object that you can create in Python as a value in a dictionary.
+Question 1:
+Create a dictionary for Amy, with her name, age ( she is 15) and her Grade ( 78)
+Print out the keys
+Print out the values
+Print out the items (key, value)
+# Create a dict  with keys Name, age and Grade
+d = {'Name':'Amy', 'Age':15, 'Grade': 78 }
+type (d)
+dict
+# Check keys
+d.keys()
+dict_keys(['Name', 'Age', 'Grade'])
+# Check values of each key
+d.values()
+dict_values(['Amy', 15, 78])
+d.items()
+dict_items([('Name', 'Amy'), ('Age', 15), ('Grade', 78)])
+Question 2:
+Create a dictionary with A ( has value 10) , B ( has value 12) and C ( has value 4)
+
+loop through the dictionary and print out the key and the value
+loop through the values and print out the values if gretater than 8
+dica ={'A': 10, 'B': 12, 'C': 4}
+for key in dica:
+    print(key, dica[key])
+    
+A 10
+B 12
+C 4
+dica = {'A': 10, 'B': 12, 'C': 4}
+# We can get the values right away as follows
+for score in dica.values():
+    if (score> 8):
+        print(score)
+    
+10
+12
+Question 3:
+Write a function that will return the count of distinct alphabetic characters that occur more than once in the input string.
+The input string can be assumed to contain only alphabets.
+eg 'my string contains ' The duplicates would be s 2 , n 3, i 2, t 2.
+Hint:
+
+1. define count as an empty dictionary.
+2. For each letter in the string, check if it is a key
+3. If it is a key add one to the value associated with that  key
+4. If there is no key call theh value of that new key 1.
+5. Use has.key(s) to establish if s is a key
+def duplicate(check_string):
+    count = {}
+    for s in check_string:
+        # check if s is a key
+        ans  = s in count
+        if ans == True:
+            #s is a key so add one to its count
+            count[s] = count[s] + 1
+            # s is not a key so make it a key by establishing one as its value
+        else:
+            count[s] = 1
+​
+    for key in count:
+        if count[key] > 1:
+            print(key, count[key])
+    return
+​
+my_string = 'indivisibilityvt'
+duplicate(my_string)
+​
+mystring = 'my string contains ' 
+duplicate(mystring)
+​
+i 6
+v 2
+t 2
+  3
+s 2
+t 2
+i 2
+n 3
+Question 4: Word Frequency
+Write a function to count the frequency of words given a list of words
+​
+def word_frequency(words):
+    frequency = {}
+    for word in words:
+        frequency[word]= frequency.get(word,0)+1
+    return frequency
+​
+words = ['eat', 'ate', 'done', 'tea', 'soup', 'node', 'eat', 'eat', 'tea'] 
+​
+frequency = word_frequency(words)
+print(frequency)
+  
+Question 5
+Write a function that takes in a paragraph and outputs the ordered set of words in the paragraph from most used to twice used.
+
+para = '''Once upon a time there was a huge lake called lake of Lakes. This time when I went there there was a huge tree next to the lake'''
+
+def wrd_freq_paragraph(paragraph):
+    ordered= []
+    names = []
+    mylist = paragraph.split()
+    n = len(mylist)
+    frequency = word_frequency(mylist)
+    maxscore = 2
+    while maxscore >1:
+        maxt = 0
+        for word, score in  frequency.items():
+            if score > maxt:
+                maxt= score
+                maxword = word
+        #print 'The most frequent word is', word
+        #print 'Frequency of this word', score
+        maxscore = maxt
+        if maxscore >1:
+            names.append(maxword)
+            ordered.append(maxscore)
+            
+        del frequency[maxword]
+        
+    return names, ordered
+​
+​
+    
+para = '''Once  upon a time there was a huge lake called lake of Lakes. This time when I went there there was a huge tree 
+    next to the lake'''
+​
+names, ordered = wrd_freq_paragraph(para)
+n = len(names)
+for  i in range(1, n):
+    print(names[i], ordered[i])
+​
+​
+********************************************************
+
+
+
+
+
+
 
 
 
